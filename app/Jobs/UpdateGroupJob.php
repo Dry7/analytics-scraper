@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Services\Html\VKService;
 use App\Services\ScraperService;
+use App\Types\Network;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -53,7 +54,7 @@ class UpdateGroupJob extends Job
         $data = $service->scraper($this->url);
 
         if (!is_null($data)) {
-            $scraper->send($data);
+            $scraper->send(Network::getVkontakteCode(), $data);
         }
     }
 
