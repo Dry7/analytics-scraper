@@ -18,9 +18,9 @@ class ScraperService
         $this->backendHost = $backendHost;
     }
 
-    public function send(array $group)
+    public function send(string $networkCode, array $group)
     {
-        $this->client->post($this->backendHost . '/api/register', [
+        $this->client->post($this->backendHost . '/api/'  . $networkCode . '/register', [
             'json' => $group,
         ]);
     }
