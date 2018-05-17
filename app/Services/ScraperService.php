@@ -21,6 +21,9 @@ class ScraperService
     public function send(string $networkCode, array $group)
     {
         $this->client->post($this->backendHost . '/api/'  . $networkCode . '/register', [
+            'headers' => [
+                'X-API-KEY' => config('scraper.api_key'),
+            ],
             'json' => $group,
         ]);
     }
