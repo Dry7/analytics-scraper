@@ -76,7 +76,7 @@ class VKService
 
         $group = $this->parseHTML($html);
 
-        if (is_null($group['source_id']) || is_null($group['members'])) {
+        if (is_null($group['source_id']) || is_null($group['members']) || !($group['members'] > 0)) {
             return null;
         }
 
@@ -136,6 +136,7 @@ class VKService
     {
         return !$group['is_closed']
             && !$group['is_banned']
+            && ($group['members'] > 5000)
             && ($group['posts'] > 0 || is_null($group['posts']))
             && !is_null($group['last_post_at'])
             && $group['last_post_at'] > Carbon::now()->subMonths($this->maxWallDate);
@@ -205,15 +206,15 @@ class VKService
             if ($em !== false) {
                 $members[1] = substr($members[1], 0, $em);
             }
-            $result['members'] = preg_replace('/[^0-9]*/i', '', $members[1]);
+            $result['members'] = (int)preg_replace('/[^0-9]*/i', '', $members[1]);
         }
 
-        $result['is_verified'] = preg_match('#<b class="verified"></b>#i', $html);
-        $result['is_closed'] = preg_match('#Закрытая группа#i', $html);
-        $result['is_adult'] = preg_match('#Мне исполнилось 18 лет#i', $html);
-        $result['is_private'] = preg_match('#Это частное сообщество. Доступ только по приглашениям администраторов.#i', $html);
-        $result['is_banned'] = preg_match('#Сообщество заблокировано в связи с возможным нарушением правил сайта.#i', $html)
-        || preg_match('#Данный материал заблокирован на территории Российской Федерации#i', $html);
+        $result['is_verified'] = (bool)preg_match('#<b class="verified"></b>#i', $html);
+        $result['is_closed'] = (bool)preg_match('#Закрытая группа#i', $html);
+        $result['is_adult'] = (bool)preg_match('#Мне исполнилось 18 лет#i', $html);
+        $result['is_private'] = (bool)preg_match('#Это частное сообщество. Доступ только по приглашениям администраторов.#i', $html);
+        $result['is_banned'] = (bool)(preg_match('#Сообщество заблокировано в связи с возможным нарушением правил сайта.#i', $html)
+        || preg_match('#Данный материал заблокирован на территории Российской Федерации#i', $html));
 
         if (preg_match('#mhi_back">Мероприятие</span>#i', $html)) {
             $result['type_id'] = Type::EVENT;
@@ -243,21 +244,21 @@ class VKService
 
         if (preg_match('#<img src="(.*)" class="pp_img#i', $html, $avatar)) {
             $result['avatar'] = $avatar[1];
-            if ($result['avatar'] === '/images/community_100.png') {
+            if (in_array($result['avatar'], ['/images/community_100.png', '/images/camera_100.png'])) {
                 $result['avatar'] = self::BASE_URL . substr($result['avatar'], 1, strlen($result['avatar']));
             }
         }
 
         if (preg_match('#<span class="slim_header_label">(.*)</span>#i', $html, $posts)) {
-            $result['posts'] = preg_replace('/[^0-9]*/i', '', $posts[1]);
+            $result['posts'] = (int)preg_replace('/[^0-9]*/i', '', $posts[1]);
         }
 
         if (!($result['posts'] > 0) && preg_match('#wall"><h4 class="slim_header clearfix"><span class="slim_header_label">(.*)</span>#i', $html, $posts)) {
-            $result['posts'] = preg_replace('/[^0-9]*/i', '', $posts[1]);
+            $result['posts'] = (int)preg_replace('/[^0-9]*/i', '', $posts[1]);
         }
 
         if (!($result['posts'] > 0) && preg_match('#<a name="wall"></a>\s*<h4 class="slim_header">(.*)</h4>#i', $html, $posts)) {
-            $result['posts'] = preg_replace('/[^0-9]*/i', '', $posts[1]);
+            $result['posts'] = (int)preg_replace('/[^0-9]*/i', '', $posts[1]);
         }
 
         if (!($result['posts'] > 0) && preg_match('#id="page_wall_count_own" value="(\d+)"#', $html, $posts)) {
@@ -273,7 +274,7 @@ class VKService
         }
 
         if (preg_match('#<a href="\/wall\?act=toggle_subscribe\&owner_id=\-(\d*)&#i', $html, $source_id)) {
-            $result['source_id'] = $source_id[1];
+            $result['source_id'] = (int)$source_id[1];
         }
 
         if (preg_match('#<link rel="canonical" href="([^"]*)" />#i', $html, $url)) {
@@ -283,7 +284,7 @@ class VKService
 
         foreach (self::INFO as $key => $value) {
             if (preg_match('#' . $value . ' <em class="pm_counter">([^<]*)</em>#i', $html, $item)) {
-                $result[$key] = $item[1];
+                $result[$key] = (int)$item[1];
             } else {
                 $result[$key] = null;
             }
