@@ -60,6 +60,7 @@ $app->configure('analytics');
 $app->configure('filesystem');
 $app->configure('queue');
 $app->configure('scraper');
+$app->configure('sentry');
 
 /*
 |--------------------------------------------------------------------------
@@ -92,6 +93,7 @@ $app->configure('scraper');
 */
 
 $app->register(App\Providers\AppServiceProvider::class);
+$app->register(Sentry\SentryLaravel\SentryLumenServiceProvider::class);
 $app->register(\VladimirYuldashev\LaravelQueueRabbitMQ\LaravelQueueRabbitMQServiceProvider::class);
 
 /*

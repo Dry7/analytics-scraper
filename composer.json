@@ -12,7 +12,8 @@
         "menarasolutions/geographer": "^0.3.5",
         "menarasolutions/geographer-ru": "^0.2.2",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^7.0",
-        "league/flysystem": " ~1.0"
+        "league/flysystem": " ~1.0",
+        "sentry/sentry-laravel": "^0.9.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
