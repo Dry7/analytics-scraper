@@ -8,4 +8,9 @@ class Utils
     {
         return $val == ''  ? null : $val;
     }
+
+    public static function randomArrayValue(array $array)
+    {
+        return $array[array_rand($array)];
+    }
 }

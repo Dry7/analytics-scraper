@@ -26,6 +26,13 @@ class VKService
     /** @var Client */
     private $client;
 
+    /** @var array */
+    private $clientOptions = [
+        'headers' => [
+            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
+        ]
+    ];
+
     /** @var CountryService */
     private $countryService;
 
@@ -55,6 +62,13 @@ class VKService
     )
     {
         $this->client = $client;
+
+        if (!empty(config('adspy.ips'))) {
+            $this->clientOptions['curl'] = [
+                CURLOPT_INTERFACE => Utils::randomArrayValue(config('adspy.ips')),
+            ];
+        }
+
         $this->countryService = $countryService;
         $this->maxWallPages = $maxWallPages;
         $this->maxWallDate = $maxWallDate;
@@ -150,7 +164,7 @@ class VKService
     private function load(string $slug): ?string
     {
         try {
-            $response = $this->client->get(self::BASE_URL . $slug)->getBody();
+            $response = $this->client->get(self::BASE_URL . $slug, $this->clientOptions)->getBody();
 
             if ($this->isRateLimit($response)) {
                 echo "\nrateLimit";
@@ -492,13 +506,10 @@ class VKService
      */
     public function loadWall(int $groupId, int $offset = 0)
     {
-        $response = $this->client->request('GET', self::BASE_URL . 'wall-' . $groupId . '?offset=' . $offset, [
+        $response = $this->client->request('GET', self::BASE_URL . 'wall-' . $groupId . '?offset=' . $offset, $this->clientOptions + [
             'query' => [
                 'own' => 1,
                 'offset' => $offset
-            ],
-            'headers' => [
-                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
             ]
         ])->getBody();
 
