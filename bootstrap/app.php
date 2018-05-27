@@ -58,6 +58,7 @@ $app->singleton('filesystem', function ($app) {
 
 $app->configure('analytics');
 $app->configure('filesystem');
+$app->configure('logging');
 $app->configure('queue');
 $app->configure('scraper');
 $app->configure('sentry');
