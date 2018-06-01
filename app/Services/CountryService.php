@@ -47,9 +47,9 @@ class CountryService
         });
     }
 
-    private function parseAddress(string $address)
+    public function parseAddress(string $address)
     {
-        $countryCode = $this->getCountryCode($address);
+        $countryCode = $this->getCountryCode($address) ?? 'RU';
         $stateCode = null;
 
         if (is_null($countryCode)) {
