@@ -1,6 +1,7 @@
 /vendor
 /.idea
 /.vagrant
+/coverage
 Homestead.json
 Homestead.yaml
 .env

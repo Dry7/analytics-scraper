@@ -11,6 +11,6 @@ class Utils
 
     public static function randomArrayValue(array $array)
     {
-        return $array[array_rand($array)];
+        return !empty($array) ? $array[array_rand($array)] : null;
     }
 }
