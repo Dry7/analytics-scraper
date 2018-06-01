@@ -136,6 +136,7 @@ class CountryServiceTest extends \TestCase
             ['ВШПМ СПбГУПТД (бывш. СЗИП), Джамбула пер., 13, Санкт-Петербург', 'RU', 'RU-SPE', 498817],
             ['Москва', 'RU', 'RU-MOW', 524901],
             ['Хмельницкий, Украина', 'UA', 'UA-68', 706369],
+            ['', null, null, null],
         ];
     }
 
@@ -149,7 +150,7 @@ class CountryServiceTest extends \TestCase
      * @param string $stateCode
      * @param int $cityCode
      */
-    public function parseAddress(string $address, string $countryCode, string $stateCode, int $cityCode)
+    public function parseAddress(string $address, ?string $countryCode, ?string $stateCode, ?int $cityCode)
     {
         $result = $this->service->parseAddress($address);
 
@@ -165,11 +166,10 @@ class CountryServiceTest extends \TestCase
      */
     public function findCity()
     {
-        Cache::shouldReceive('rememberForever')
-            ->with('CountryService::findCity::' . md5('Санкт-Петербург'), \Closure::class)
-            ->andReturn(['country_code' => 'RU', 'state_code' => 'RU-SPE', 'city_code' => 498817]);
+        $this->createApplication();
 
-        $this->service->findCity('Санкт-Петербург');
-        $this->service->findCity('Санкт-Петербург');
+        $result = $this->service->findCity('ВШПМ СПбГУПТД (бывш. СЗИП), Джамбула пер., 13, Санкт-Петербург');
+
+        $this->assertEquals(['country_code' => 'RU', 'state_code' => 'RU-SPE', 'city_code' => 498817], $result);
     }
 }
