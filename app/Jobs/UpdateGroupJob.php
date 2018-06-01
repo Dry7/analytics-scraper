@@ -54,12 +54,7 @@ class UpdateGroupJob extends Job
         $data = $service->scraper($this->url);
 
         if (!is_null($data)) {
-            $scraper->send(Network::getVkontakteCode(), $data);
+            $scraper->send(Network::getCode($this->networkId), $data);
         }
-    }
-
-    public function fail($exception = null)
-    {
-        echo "\nFail - {$this->url} - $exception";
     }
 }
