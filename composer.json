@@ -35,7 +35,8 @@
     "scripts": {
         "post-root-package-install": [
             "php -r \"copy('.env.example', '.env');\""
-        ]
+        ],
+        "coverage": "vendor/bin/phpunit --coverage-html ./coverage"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
