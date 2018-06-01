@@ -11,4 +11,9 @@ abstract class TestCase extends Laravel\Lumen\Testing\TestCase
     {
         return require __DIR__.'/../bootstrap/app.php';
     }
+
+    protected function fixture(string $filename)
+    {
+        return (array)json_decode(file_get_contents(base_path('tests/fixtures/' . $filename)));
+    }
 }

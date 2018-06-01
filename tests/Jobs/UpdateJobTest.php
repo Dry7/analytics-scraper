@@ -12,7 +12,7 @@ class UpdateJobTest extends \TestCase
     public function handleDataProvider()
     {
         return [
-            ['meduzaproject', (array)json_decode(file_get_contents(base_path('tests/fixtures/group.json')))],
+            ['meduzaproject', $this->fixture('group.json')],
             ['alexander_volkov_club', null],
         ];
     }
