@@ -46,6 +46,6 @@ class LoggerService
      */
     public function getRandomID(): string
     {
-        return $data['source_id'] = 'UNKNOWN_' . rand(1, 1000000000);
+        return 'UNKNOWN_' . rand(1, 1000000000);
     }
 }
