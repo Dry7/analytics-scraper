@@ -223,6 +223,11 @@ class VKService
             $result['members'] = (int)preg_replace('/[^0-9]*/i', '', $members[1]);
         }
 
+        if (empty($result['members'])
+            && preg_match('#page\.showPageMembers\(event,\s*-\d+,\s*\'members\'\)"\s*class="module_header">\s*<div\s*class="header_top\s*clear_fix">\s*<span class="header_label fl_l">[^<]+</span>\s*<span class="header_count fl_l">([^<]+)</span>\s*</div>#i', $html, $members)) {
+            $result['members'] = (int)preg_replace('/[^0-9]*/i', '', $members[1]);
+        }
+
         $result['is_verified'] = (bool)preg_match('#<b class="verified"></b>#i', $html);
         $result['is_closed'] = (bool)preg_match('#Закрытая группа#i', $html);
         $result['is_adult'] = (bool)preg_match('#Мне исполнилось 18 лет#i', $html);
@@ -320,25 +325,33 @@ class VKService
         }
 
         if (!preg_match_all('#<a class="wi_date"(?: [^>]*)>([^<]*)</a>#i', $html, $dates)) {
-            $dates = [1 => []];
+            if (!preg_match_all('#showWiki\({w:\s*\'wall-\d+_\d+\'},\s*false,\s*event\);" ><span class="rel_date[^>]*>([^<]+)</span>#i', $html, $dates)) {
+                $dates = [1 => []];
+            }
         }
 
         if (!preg_match_all('#aria-label="(\d+) Нравится"><i class="i_like">#i', $html, $likes)) {
-            $likes = [1 => []];
+            if (!preg_match_all('#Likes\.showLikes\(this,\s+\'wall-\d+_\d+\',\s+{}\)"\s+data-count="(\d+)"#i', $html, $likes)) {
+                $likes = [1 => []];
+            }
         }
 
         if (!preg_match_all('#aria-label="(\d+) Поделиться"><i class="i_share">#i', $html, $shares)) {
-            $shares = [1 => []];
+            if (!preg_match_all('#Likes.showShare\(this,\s+\'wall-\d+_\d+\'\);"\s+data-count="(\d+)"#i', $html, $shares)) {
+                $shares = [1 => []];
+            }
         }
 
         if (!preg_match_all('#no_views|aria-label="(\d+) (просмотр|просмотра|просмотров)*"><i class="i_views">#i', $html, $views)) {
-            $views = [1 => []];
+            if (!preg_match_all('#Likes.updateViews\(\'wall-\d+_\d+\'\);">([^<]+)</div>#i', $html, $views)) {
+                $views = [1 => []];
+            }
         }
 
         $posts = [];
 
         foreach ($ids[1] as $i => $id) {
-            $date = $this->date2carbon($dates[1][$i]);
+            $date = $this->date2carbon($this->decode($dates[1][$i]));
             if (is_null($lastPostAt) || $date > $lastPostAt) {
                 $lastPostAt = $date;
             }
@@ -347,7 +360,7 @@ class VKService
                 'date'   => $date->toDateTimeString(),
                 'likes'  => Utils::string2null($likes[1][$i]),
                 'shares' => Utils::string2null($shares[1][$i]),
-                'views'  => Utils::string2null($views[1][$i]),
+                'views'  => $this->getNumber(Utils::string2null($views[1][$i])),
             ];
         }
 
