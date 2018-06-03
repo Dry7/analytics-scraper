@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Services;
+namespace App\Tests\Jobs;
 
 use App\Jobs\UpdateGroupJob;
 use App\Services\Html\VKService;

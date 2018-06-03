@@ -16,4 +16,9 @@ abstract class TestCase extends Laravel\Lumen\Testing\TestCase
     {
         return (array)json_decode(file_get_contents(base_path('tests/fixtures/' . $filename)));
     }
+
+    protected function sleep($seconds)
+    {
+        sleep($seconds);
+    }
 }

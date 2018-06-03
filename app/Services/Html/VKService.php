@@ -77,12 +77,13 @@ class VKService
 
     /**
      * @param string $slug
+     * @param bool $processWall
      *
      * @return array|null
      *
      * @throws \Exception
      */
-    public function scraper(string $slug): ?array
+    public function scraper(string $slug, $processWall = true): ?array
     {
         if (!($html = $this->load($slug))) {
             return null;
@@ -94,10 +95,12 @@ class VKService
             return null;
         }
 
-        $group['wall'] = $this->runWall($group);
+        if ($processWall) {
+            $group['wall'] = $this->runWall($group);
 
-        if (!is_null($group['last_post_at'])) {
-            $group['last_post_at'] = $group['last_post_at']->toDateTimeString();
+            if (!is_null($group['last_post_at'])) {
+                $group['last_post_at'] = $group['last_post_at']->toDateTimeString();
+            }
         }
 
         return $group;
@@ -212,7 +215,7 @@ class VKService
         ];
 
         if (preg_match('#<title>(.*)</title>#i', $html, $title)) {
-            $result['title'] = $title[1];
+            $result['title'] = str_replace(' | ВКонтакте', '', $this->decode($title[1]));
         }
 
         if (preg_match('#<em class="pm_counter">(.*)</em>#i', $html, $members)) {
@@ -228,44 +231,65 @@ class VKService
             $result['members'] = (int)preg_replace('/[^0-9]*/i', '', $members[1]);
         }
 
-        $result['is_verified'] = (bool)preg_match('#<b class="verified"></b>#i', $html);
-        $result['is_closed'] = (bool)preg_match('#Закрытая группа#i', $html);
-        $result['is_adult'] = (bool)preg_match('#Мне исполнилось 18 лет#i', $html);
+        $result['is_verified'] = (bool)preg_match('#<h2\s*class="page_name">[^<]+<a\s*href="\/verify"\s*class="page_verified#i', $html);
+        $result['is_closed'] = (bool)!preg_match('#wall_module#i', $html);
+        $result['is_adult'] = (bool)preg_match('#"age_disclaimer":true#i', $html);
         $result['is_private'] = (bool)preg_match('#Это частное сообщество. Доступ только по приглашениям администраторов.#i', $html);
         $result['is_banned'] = (bool)(preg_match('#Сообщество заблокировано в связи с возможным нарушением правил сайта.#i', $html)
         || preg_match('#Данный материал заблокирован на территории Российской Федерации#i', $html));
 
-        if (preg_match('#mhi_back">Мероприятие</span>#i', $html)) {
+        if (preg_match('#mhi_back">Мероприятие</span>#i', $html)
+            || preg_match('#id="event_admin"#i', $html)) {
             $result['type_id'] = Type::EVENT;
-        } elseif (preg_match('#mhi_back">Страница</span>#i', $html)) {
+        } elseif (preg_match('#mhi_back">Страница</span>#i', $html)
+            || preg_match('#public_followers#i', $html)
+            || preg_match('#<aside aria-label="Подписчики">#i', $html)) {
             $result['type_id'] = Type::PUBLIC;
         } else {
             $result['type_id'] = Type::GROUP;
         }
 
-        if (preg_match('#<dt>Дата основания:</dt><dd>(.*)</dd>#i', $html, $opened_at)) {
-            $result['opened_at'] = $this->date2carbon($opened_at[1])->toDateTimeString();
+        if (preg_match('#<dt>Дата основания:</dt><dd>(.*)</dd>#i', $html, $opened_at)
+         || preg_match('#<div class="group_info_row date" title="[^"]+">([^<]*)</div>#i', $html, $opened_at)) {
+            $result['opened_at'] = $this->date2carbon($this->decode($opened_at[1]))->toDateTimeString();
         }
 
-        if (preg_match('#<dl class="pinfo_row"><dt>Место:</dt><dd><a(?: [^>]*)>([^>]*)</a>#i', $html, $city)) {
-            foreach ($this->countryService->findCity(strip_tags($city[1])) as $key => $value) {
+        if (preg_match('#<dl class="pinfo_row"><dt>Место:</dt><dd><a(?: [^>]*)>([^<]*)</a>#i', $html, $city)
+         || preg_match('#<div class="group_info_row address" title="[^"]+"><a href="[^"]+">([^<]*)</a></div>#', $html, $city)) {
+            foreach ($this->countryService->findCity($this->decode(strip_tags($city[1]))) as $key => $value) {
                 $result[$key] = $value;
             }
         }
 
-        if (preg_match('#<dt>Начало:</dt><dd>([^>]*)</dd>#i', $html, $event_start)) {
-            $result['event_start'] = $this->date2carbon($event_start[1])->toDateTimeString();
+        if (preg_match('#<dt>Начало:</dt><dd>([^>]*)</dd>#i', $html, $event_start)
+         || preg_match('#<div class="group_info_row time" title="[^"]+">([^<]*)</div>#', $html, $event_start)
+         || preg_match('#<div class="group_info_row soon" title="[^"]+">([^<]*)</div>#', $html, $event_start)) {
+            $event_start = preg_replace('#Событие состоялось#i', '', $this->decode($event_start[1]));
+            if (strpos($event_start, '&mdash;') !== false) {
+                $events = explode('&mdash;', $event_start);
+                $result['event_start'] = $this->date2carbon(trim($events[0]))->toDateTimeString();
+                $result['event_end'] = $this->date2carbon(trim($events[1]))->toDateTimeString();
+            } else {
+                $result['event_start'] = $this->date2carbon(trim($event_start))->toDateTimeString();
+            }
         }
 
         if (preg_match('#<dt>Окончание:</dt><dd>([^>]*)</dd>#i', $html, $event_end)) {
             $result['event_end'] = $this->date2carbon($event_end[1])->toDateTimeString();
         }
 
-        if (preg_match('#<img src="(.*)" class="pp_img#i', $html, $avatar)) {
+        if (preg_match('#<img src="(.*)" class="pp_img#i', $html, $avatar)
+        || preg_match('#<a class="page_cover_image" [^>]*>\s*<img src="([^"]+)"#i', $html, $avatar)
+        || preg_match('#<div id="page_avatar" class="page_avatar"><a [^>]*><img class="page_avatar_img" src="([^"]+)"#i', $html, $avatar)
+        || preg_match('#<div id="page_avatar" class="page_avatar"><img class="page_avatar_img" src="([^"]+)"#i', $html, $avatar)) {
             $result['avatar'] = $avatar[1];
             if (in_array($result['avatar'], ['/images/community_100.png', '/images/camera_100.png'])) {
                 $result['avatar'] = self::BASE_URL . substr($result['avatar'], 1, strlen($result['avatar']));
             }
+        }
+
+        if (empty($result['avatar'])) {
+            $result['avatar'] = self::BASE_URL . 'images/community_100.png';
         }
 
         if (preg_match('#<span class="slim_header_label">(.*)</span>#i', $html, $posts)) {
@@ -294,10 +318,15 @@ class VKService
 
         if (preg_match('#<a href="\/wall\?act=toggle_subscribe\&owner_id=\-(\d*)&#i', $html, $source_id)) {
             $result['source_id'] = (int)$source_id[1];
+        } elseif(preg_match('#page\.showPageMembers\(event, -(\d+), \'members\'\)"#i', $html, $source_id)) {
+            $result['source_id'] = (int)$source_id[1];
         }
 
         if (preg_match('#<link rel="canonical" href="([^"]*)" />#i', $html, $url)) {
             $result['url'] = $url[1];
+            $result['slug'] = str_replace(self::BASE_URL, '', $result['url']);
+        } elseif (preg_match('#<link rel="alternate" media="only screen and \(max-width: 640px\)" href="([^"]+)" />#', $html, $url)) {
+            $result['url'] = preg_replace('#^https://m.vk.com#i', 'https://vk.com', $url[1]);
             $result['slug'] = str_replace(self::BASE_URL, '', $result['url']);
         }
 
@@ -316,51 +345,68 @@ class VKService
         return $result;
     }
 
+    /**
+     * @todo check method
+     *
+     * @param string $html
+     * @return array
+     */
     public function loadWallFromGroup(string $html)
     {
         $lastPostAt = null;
 
-        if (!preg_match_all('#data-post-id="([^"]*)" data-post-click-type="post_owner_img"#i', $html, $ids)) {
+        if (!preg_match_all('#own[^"]*" data-post-id="-([^"]*)"#i', $html, $ids)) {
             $ids = [1 => []];
         }
 
         if (!preg_match_all('#<a class="wi_date"(?: [^>]*)>([^<]*)</a>#i', $html, $dates)) {
-            if (!preg_match_all('#showWiki\({w:\s*\'wall-\d+_\d+\'},\s*false,\s*event\);" ><span class="rel_date[^>]*>([^<]+)</span>#i', $html, $dates)) {
+            if (!preg_match_all('#showWiki\({w:\s*\'wall-(\d+_\d+)\'},\s*false,\s*event\);" ><span class="rel_date[^>]*>([^<]+)</span>#i', $html, $dates)) {
                 $dates = [1 => []];
             }
         }
 
         if (!preg_match_all('#aria-label="(\d+) Нравится"><i class="i_like">#i', $html, $likes)) {
-            if (!preg_match_all('#Likes\.showLikes\(this,\s+\'wall-\d+_\d+\',\s+{}\)"\s+data-count="(\d+)"#i', $html, $likes)) {
+            if (!preg_match_all('#Likes\.showLikes\(this,\s+\'wall-(\d+_\d+)\',\s+{}\)"\s+data-count="(\d+)"#i', $html, $likes)) {
                 $likes = [1 => []];
             }
         }
 
         if (!preg_match_all('#aria-label="(\d+) Поделиться"><i class="i_share">#i', $html, $shares)) {
-            if (!preg_match_all('#Likes.showShare\(this,\s+\'wall-\d+_\d+\'\);"\s+data-count="(\d+)"#i', $html, $shares)) {
+            if (!preg_match_all('#Likes.showShare\(this,\s+\'wall-(\d+_\d+)\'\);"\s+data-count="(\d+)"#i', $html, $shares)) {
                 $shares = [1 => []];
             }
         }
 
         if (!preg_match_all('#no_views|aria-label="(\d+) (просмотр|просмотра|просмотров)*"><i class="i_views">#i', $html, $views)) {
-            if (!preg_match_all('#Likes.updateViews\(\'wall-\d+_\d+\'\);">([^<]+)</div>#i', $html, $views)) {
+            if (!preg_match_all('#Likes.updateViews\(\'wall-(\d+_\d+)\'\);">([^<]+)</div>#i', $html, $views)) {
                 $views = [1 => []];
             }
         }
 
         $posts = [];
 
+        if (!(sizeof($ids[1]) > 0)) {
+            return [
+                'last_post_at' => null,
+            ];
+        }
+
+        $dates  = $this->mergeCounts($dates[1], $dates[2]);
+        $likes  = $this->mergeCounts($likes[1], $likes[2]);
+        $shares = $this->mergeCounts($shares[1], $shares[2]);
+        $views  = $this->mergeCounts((array)@$views[1], (array)@$views[2]);
+
         foreach ($ids[1] as $i => $id) {
-            $date = $this->date2carbon($this->decode($dates[1][$i]));
+            $date = $this->date2carbon($this->decode($dates[$id]));
             if (is_null($lastPostAt) || $date > $lastPostAt) {
                 $lastPostAt = $date;
             }
             $posts[] = [
                 'id'     => array_last(explode('_', $id)),
                 'date'   => $date->toDateTimeString(),
-                'likes'  => Utils::string2null($likes[1][$i]),
-                'shares' => Utils::string2null($shares[1][$i]),
-                'views'  => $this->getNumber(Utils::string2null($views[1][$i])),
+                'likes'  => $likes[$id] ?? null,
+                'shares' => $shares[$id] ?? null,
+                'views'  => $this->getNumber($views[1][$i] ?? '0'),
             ];
         }
 
@@ -370,21 +416,33 @@ class VKService
         ];
     }
 
+    public function mergeCounts(array $keys, array $values): array
+    {
+        $array = [];
+
+        foreach ($keys as $i => $key) {
+            $array[$key] = $values[$i];
+        }
+
+        return $array;
+    }
+
     /**
      * @param string $date
      * @return Carbon
      */
-    private function date2carbon(string $date)
+    public function date2carbon(string $date)
     {
         switch ($date) {
             case 'только что':
                 return Carbon::now();
 
+            case 'минуту назад':
             case 'одну минуту назад':
                 return Carbon::now()->subMinute();
 
             case 'две минуты назад':
-                return Carbon::now()->subMinutes(3);
+                return Carbon::now()->subMinutes(2);
 
             case 'три минуты назад':
                 return Carbon::now()->subMinutes(3);
@@ -411,19 +469,19 @@ class VKService
                 return Carbon::now()->subMinutes(10);
 
             case 'час назад':
-                return Carbon::now()->subHour();
+                return Carbon::now()->subHour()->second(0);
 
             case 'два часа назад':
-                return Carbon::now()->subHours(2);
+                return Carbon::now()->subHours(2)->second(0);
 
             case 'три часа назад':
-                return Carbon::now()->subHours(3);
+                return Carbon::now()->subHours(3)->second(0);
 
             case 'четыре часа назад':
-                return Carbon::now()->subHours(4);
+                return Carbon::now()->subHours(4)->second(0);
 
             case 'пять часов назад':
-                return Carbon::now()->subHours(5);
+                return Carbon::now()->subHours(5)->second(0);
         }
 
         if (preg_match('#\d (минут|минуты|минуту) назад#i', $date)) {
@@ -435,7 +493,7 @@ class VKService
         }
 
         if (preg_match('#\d год#i', $date)) {
-            return Carbon::createFromDate((int)$date, 1, 1);
+            return Carbon::createFromDate((int)$date, 1, 1)->setTime(0, 0, 0);
         }
 
         foreach ([
@@ -443,7 +501,7 @@ class VKService
                      'Август' => 8, 'Сентябрь' => 9, 'Октябрь' => 10, 'Ноябрь' => 11, 'Декабрь' => 12
                  ] as $value => $id) {
             if (preg_match('#' . $value . ' (\d*)#i', $date, $year)) {
-                return Carbon::createFromDate($year[1], $id, 1);
+                return Carbon::createFromDate($year[1], $id, 1)->setTime(0, 0, 0);
             }
         }
 
@@ -488,7 +546,7 @@ class VKService
 
         $date = preg_replace('#в#', '', $date);
 
-        return Carbon::createFromFormat('d.m.Y H:i', $date);
+        return Carbon::createFromFormat('d.m.Y H:i', $date)->second(0);
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Services;
+namespace App\Tests\Types;
 
 use App\Types\Network;
 
