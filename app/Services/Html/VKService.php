@@ -95,7 +95,7 @@ class VKService
             return null;
         }
 
-        if ($processWall) {
+        if ($processWall && $this->isCheckWall($group)) {
             $group['wall'] = $this->runWall($group);
 
             if (!is_null($group['last_post_at'])) {
@@ -115,10 +115,6 @@ class VKService
      */
     public function runWall(array $group)
     {
-        if (!$this->isCheckWall($group)) {
-            return [];
-        }
-
         $dateFilter = Carbon::now()->subMonths($this->maxWallDate);
 
         $offset = $page = 0;

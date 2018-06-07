@@ -27,8 +27,10 @@ class NetworkTest extends \TestCase
      */
     public function getCode(int $networkId, ?string $expected)
     {
+        // act
         $result = Network::getCode($networkId);
 
+        // assert
         $this->assertEquals($expected, $result);
     }
 
@@ -37,8 +39,10 @@ class NetworkTest extends \TestCase
      */
     public function getVkontakteCode()
     {
+        // act
         $result = Network::getVkontakteCode();
 
+        // assert
         $this->assertEquals('vk', $result);
     }
 
@@ -47,8 +51,10 @@ class NetworkTest extends \TestCase
      */
     public function getOdnoklassnikiCode()
     {
+        // act
         $result = Network::getOdnoklassnikiCode();
 
+        // assert
         $this->assertEquals('ok', $result);
     }
 
@@ -57,8 +63,10 @@ class NetworkTest extends \TestCase
      */
     public function getFacebookCode()
     {
+        // act
         $result = Network::getFacebookCode();
 
+        // assert
         $this->assertEquals('fb', $result);
     }
 
@@ -67,8 +75,10 @@ class NetworkTest extends \TestCase
      */
     public function getMailCode()
     {
+        // act
         $result = Network::getMailCode();
 
+        // assert
         $this->assertEquals('mail', $result);
     }
 }

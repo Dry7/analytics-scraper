@@ -16,6 +16,11 @@ class VKServiceTest extends \TestCase
         Carbon::setTestNow('2018-06-02 12:00:00');
     }
 
+    public function tearDown()
+    {
+        Carbon::setTestNow();
+    }
+
     public function date2carbonDataProvider()
     {
         return [
@@ -90,8 +95,10 @@ class VKServiceTest extends \TestCase
      */
     public function date2carbon(string $date, string $expected)
     {
+        // act
         $result = $this->service->date2carbon($date);
 
+        // assert
         $this->assertEquals($expected, $result->toDateTimeString());
     }
 }

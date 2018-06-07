@@ -40,8 +40,10 @@ class CountryServiceTest extends \TestCase
      */
     public function getCountryCode(string $address, string $expected)
     {
+        // act
         $result = $this->service->getCountryCode($address);
 
+        // assert
         $this->assertEquals($expected, $result);
     }
 
@@ -50,8 +52,10 @@ class CountryServiceTest extends \TestCase
      */
     public function getCountries()
     {
+        // act
         $result = $this->service->getCountries();
 
+        // assert
         $this->assertCount(249, $result);
 
         foreach ($result as $country) {
@@ -81,8 +85,10 @@ class CountryServiceTest extends \TestCase
      */
     public function getStates(string $countryCode, int $statesCount)
     {
+        // act
         $result = $this->service->getStates($countryCode);
 
+        // assert
         $this->assertCount($statesCount, $result);
 
         foreach ($result as $state) {
@@ -114,10 +120,12 @@ class CountryServiceTest extends \TestCase
      */
     public function getCities(string $countryCode, string $stateCode, int $citiesCount, string $cityName)
     {
+        // act
         $result = $this->service->getCities($countryCode, $stateCode);
 
         $city = collect($result)->filter(function ($item) use ($cityName) { return $item['name'] === $cityName; });
 
+        // assert
         $this->assertTrue($city->isNotEmpty());
         $this->assertCount($citiesCount, $result);
 
@@ -152,8 +160,10 @@ class CountryServiceTest extends \TestCase
      */
     public function parseAddress(string $address, ?string $countryCode, ?string $stateCode, ?int $cityCode)
     {
+        // act
         $result = $this->service->parseAddress($address);
 
+        // assert
         $this->assertEquals([
             'country_code' => $countryCode,
             'state_code' => $stateCode,
@@ -166,10 +176,13 @@ class CountryServiceTest extends \TestCase
      */
     public function findCity()
     {
+        // arrange
         $this->createApplication();
 
+        // act
         $result = $this->service->findCity('ВШПМ СПбГУПТД (бывш. СЗИП), Джамбула пер., 13, Санкт-Петербург');
 
+        // assert
         $this->assertEquals(['country_code' => 'RU', 'state_code' => 'RU-SPE', 'city_code' => 498817], $result);
     }
 }

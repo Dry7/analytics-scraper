@@ -25,8 +25,10 @@ class UtilsTest extends \TestCase
      */
     public function string2null(string $value, ?string $expected)
     {
+        // act
         $result = Utils::string2null($value);
 
+        // assert
         $this->assertEquals($expected, $result);
     }
 
@@ -50,8 +52,10 @@ class UtilsTest extends \TestCase
      */
     public function randomArrayValue(array $array, $expected)
     {
+        // act
         $result = Utils::randomArrayValue($array);
 
+        // assert
         $this->assertEquals($expected, $result);
     }
 }

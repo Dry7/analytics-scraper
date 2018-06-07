@@ -32,38 +32,48 @@ class LoggerServiceTest extends \TestCase
      */
     public function log(bool $enabled, string $networkCode, array $data, bool $fileExists = false)
     {
+        // arrange
         Carbon::setTestNow('2018-05-01 00:00:00');
         Storage::fake('local');
 
         $service = new LoggerService($enabled);
 
-        $service->log($networkCode, $data);
-
         $fileName = 'requests/' . $networkCode . '/2018-05-01/' . @$data['source_id'] . '.txt';
 
+        // act
+        $service->log($networkCode, $data);
+
+        // assert
         if ($fileExists) {
             Storage::disk('local')->assertExists($fileName);
         } else {
             Storage::disk('local')->assertMissing($fileName);
         }
+        Carbon::setTestNow();
     }
 
     public function testGetRandomID()
     {
+        // arrange
         $service = new LoggerService();
 
+        // act
         $result = $service->getRandomID();
 
+        // assert
         $this->assertTrue((bool)preg_match('/^UNKNOWN_\d+$/', $result));
     }
 
     public function testGetRandomIDUnique()
     {
+        // arrange
         $service = new LoggerService();
 
+        // act
         $firstResult = $service->getRandomID();
         $secondResult = $service->getRandomID();
 
+        // assert
         $this->assertNotEquals($firstResult, $secondResult);
     }
 }

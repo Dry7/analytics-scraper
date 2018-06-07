@@ -20,7 +20,7 @@ class VKTest extends \TestCase
 
     public function tearDown()
     {
-        $this->sleep(0.5);
+        $this->sleep(0.2);
     }
 
     function membersDataProvider()
@@ -44,8 +44,10 @@ class VKTest extends \TestCase
      */
     public function members(string $slug, int $minMembers)
     {
+        // act
         $data = $this->service->scraper($slug, false);
 
+        // assert
         $this->assertGreaterThan($minMembers, $data['members']);
     }
 
@@ -74,8 +76,10 @@ class VKTest extends \TestCase
      */
     public function sourceId(string $slug, int $sourceId)
     {
+        // act
         $data = $this->service->scraper($slug, false);
 
+        // assert
         $this->assertEquals($sourceId, $data['source_id']);
     }
 
@@ -103,8 +107,10 @@ class VKTest extends \TestCase
      */
     public function typeId(string $slug, int $typeId)
     {
+        // act
         $data = $this->service->scraper($slug, false);
 
+        // assert
         $this->assertEquals($typeId, $data['type_id']);
     }
 
@@ -133,8 +139,10 @@ class VKTest extends \TestCase
      */
     public function title(string $slug, string $title)
     {
+        // act
         $data = $this->service->scraper($slug, false);
 
+        // assert
         $this->assertEquals($title, $data['title']);
     }
 
@@ -161,8 +169,10 @@ class VKTest extends \TestCase
      */
     public function url(string $slug, string $expectedUrl, string $expectedSlug)
     {
+        // act
         $data = $this->service->scraper($slug, false);
 
+        // assert
         $this->assertEquals($expectedUrl, $data['url']);
         $this->assertEquals($expectedSlug, $data['slug']);
     }
@@ -190,8 +200,10 @@ class VKTest extends \TestCase
      */
     public function isVerified(string $slug, bool $expected)
     {
+        // act
         $data = $this->service->scraper($slug, false);
 
+        // assert
         $this->assertEquals($expected, $data['is_verified']);
     }
 
@@ -219,8 +231,10 @@ class VKTest extends \TestCase
      */
     public function avatar(string $slug, string $expected)
     {
+        // act
         $data = $this->service->scraper($slug, false);
 
+        // assert
         $this->assertEquals($expected, $data['avatar']);
     }
 
@@ -247,8 +261,10 @@ class VKTest extends \TestCase
      */
     public function posts(string $slug, ?int $minMembers)
     {
+        // act
         $data = $this->service->scraper($slug, false);
 
+        // assert
         if (is_null($minMembers)) {
             $this->assertNull($data['posts']);
         } else {
@@ -278,8 +294,10 @@ class VKTest extends \TestCase
      */
     public function isClosed(string $slug, bool $expected)
     {
+        // act
         $data = $this->service->scraper($slug, false);
 
+        // assert
         $this->assertEquals($expected, $data['is_closed']);
     }
 
@@ -307,8 +325,10 @@ class VKTest extends \TestCase
      */
     public function isAdult(string $slug, bool $expected)
     {
+        // act
         $data = $this->service->scraper($slug, false);
 
+        // assert
         $this->assertEquals($expected, $data['is_adult']);
     }
 
@@ -336,8 +356,10 @@ class VKTest extends \TestCase
      */
     public function isBanned(string $slug, bool $expected)
     {
+        // act
         $data = $this->service->scraper($slug, false);
 
+        // assert
         if ($expected) {
             $this->assertNull($data);
         } else {
@@ -369,16 +391,18 @@ class VKTest extends \TestCase
      */
     public function openedAt(string $slug, ?string $expected)
     {
+        // act
         $data = $this->service->scraper($slug, false);
 
+        // assert
         $this->assertEquals($expected, $data['opened_at']);
     }
 
     function lastPostAtDataProvider()
     {
         return [
-            ['avtoradio',       (new Carbon())->subDay()],
-            ['best_psychology', (new Carbon())->subDay()],
+            ['avtoradio',       (new Carbon())->subDays(2)],
+            ['best_psychology', (new Carbon())->subDays(2)],
             ['nevberega_sept',  new Carbon('2018-05-22 20:31:00')],
             ['club525200',      new Carbon('2015-01-25 00:00:00')],
             ['club526072',      null],
@@ -398,8 +422,10 @@ class VKTest extends \TestCase
      */
     public function lastPostAt(string $slug, ?string $expected)
     {
+        // act
         $data = $this->service->scraper($slug, false);
 
+        // assert
         if (is_null($expected)) {
             $this->assertNull($data['last_post_at']);
         } else {
@@ -430,8 +456,10 @@ class VKTest extends \TestCase
      */
     public function address(string $slug, array $expected)
     {
+        // act
         $data = $this->service->scraper($slug, false);
 
+        // assert
         $this->assertEquals($expected, [$data['country_code'], $data['state_code'], $data['city_code']]);
     }
 
@@ -458,9 +486,112 @@ class VKTest extends \TestCase
      */
     public function eventDates(string $slug, ?string $expectedStart, ?string $expectedEnd)
     {
+        // act
         $data = $this->service->scraper($slug, false);
 
+        // assert
         $this->assertEquals($expectedStart, $data['event_start']);
         $this->assertEquals($expectedEnd,   $data['event_end']);
+    }
+
+    public function emptyWallDataProvider()
+    {
+        return [
+            [4319],
+            [4467],
+            [5660],
+        ];
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider emptyWallDataProvider
+     *
+     * @param int $sourceId
+     *
+     * @throws
+     */
+    public function emptyWall(int $sourceId)
+    {
+        // act
+        $data = $this->service->runWall(['source_id' => $sourceId]);
+
+        // assert
+        $this->assertEmpty($data);
+    }
+
+    public function oldWallDataProvider()
+    {
+        return [
+            [6307, '2016-01-01 00:00:00',
+                [
+                    ['id' => 2409, 'date' => '2016-02-25 00:00:00', 'likes' => 4, 'shares' => 0, 'views' => 0, 'comments' => 0, 'is_pinned' => false, 'is_ad' => false, 'links' => []],
+                    ['id' => 2408, 'date' => '2016-02-24 00:00:00', 'likes' => 0, 'shares' => 0, 'views' => 0, 'comments' => 0, 'is_pinned' => false, 'is_ad' => false, 'links' => []],
+                ]
+            ],
+            [376606, '2016-01-01 00:00:00',
+                [
+                    ['id' => 1110, 'date' => '2016-10-07 00:00:00', 'likes' => 0,  'shares' => 0, 'views' => 0, 'comments' => 0,  'is_pinned' => false, 'is_ad' => false, 'links' => ['http://run.myviasat.ru/',]],
+                    ['id' => 1108, 'date' => '2016-10-03 00:00:00', 'likes' => 10, 'shares' => 0, 'views' => 0, 'comments' => 2,  'is_pinned' => false, 'is_ad' => false, 'links' => []],
+                    ['id' => 1106, 'date' => '2016-10-03 00:00:00', 'likes' => 18, 'shares' => 5, 'views' => 0, 'comments' => 0,  'is_pinned' => false, 'is_ad' => false, 'links' => []],
+                    ['id' => 1070, 'date' => '2016-09-30 00:00:00', 'likes' => 31, 'shares' => 2, 'views' => 0, 'comments' => 25, 'is_pinned' => false, 'is_ad' => false, 'links' => []],
+                    ['id' => 1062, 'date' => '2016-09-30 00:00:00', 'likes' => 49, 'shares' => 3, 'views' => 0, 'comments' => 17, 'is_pinned' => false, 'is_ad' => false, 'links' => []],
+                ]
+            ],
+            [407223, '2012-01-01 00:00:00',
+                [
+                    ['id' => 15, 'date' => '2012-05-07 00:00:00', 'likes' => 0, 'shares' => 0, 'views' => 0, 'comments' => 0, 'is_pinned' => false, 'is_ad' => false, 'links' => []]
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider oldWallDataProvider
+     *
+     * @param int $sourceId
+     * @param string $date
+     * @param array $expected
+     *
+     * @throws
+     */
+    public function oldWall(int $sourceId, string $date, array $expected)
+    {
+        // arrange
+        Carbon::setTestNow($date);
+
+        // act
+        $data = $this->service->runWall(['source_id' => $sourceId]);
+
+        // assert
+        $this->assertEquals($expected, $data);
+
+        Carbon::setTestNow();
+    }
+
+    /**
+     * @test
+     *
+     * @param int $sourceId
+     *
+     * @throws
+     */
+    public function popularWall(int $sourceId = 108468)
+    {
+        // act
+        $posts = collect($this->service->runWall(['source_id' => $sourceId]));
+
+        $this->assertCount(100, $posts);
+
+        // assert
+        $this->assertGreaterThanOrEqual(10, $posts->avg('likes'));
+        $this->assertGreaterThanOrEqual(5, $posts->avg('shares'));
+        $this->assertGreaterThanOrEqual(2000, $posts->avg('views'));
+        $this->assertGreaterThanOrEqual(2, $posts->avg('comments'));
+
+        Carbon::setTestNow();
     }
 }

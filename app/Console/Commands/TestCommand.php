@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Services\Html\VKService;
 use App\Services\ScraperService;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class TestCommand extends Command
@@ -12,11 +13,11 @@ class TestCommand extends Command
 
     public function handle(VKService $service, ScraperService $scraperService)
     {
-        echo "\nconfig('analytics.backend_host') - " . config('analytics.backend_host') . "\n";
-        $data = $service->scraper('meduzaproject');
+        Carbon::setTestNow('2011-01-01 00:00:00');
+        $data = $service->runWall(['source_id' => '76982440']);
 
-        print_r($data);
-
+        var_export($data);
+exit();
         $scraperService->send($data);
         $this->info('Test');
     }
