@@ -20,6 +20,7 @@ class VKTest extends \TestCase
 
     public function tearDown()
     {
+        Carbon::setTestNow();
         $this->sleep(0.2);
     }
 
@@ -568,8 +569,6 @@ class VKTest extends \TestCase
 
         // assert
         $this->assertEquals($expected, $data);
-
-        Carbon::setTestNow();
     }
 
     /**
@@ -591,7 +590,24 @@ class VKTest extends \TestCase
         $this->assertGreaterThanOrEqual(5, $posts->avg('shares'));
         $this->assertGreaterThanOrEqual(2000, $posts->avg('views'));
         $this->assertGreaterThanOrEqual(2, $posts->avg('comments'));
+    }
 
-        Carbon::setTestNow();
+    /**
+     * @test
+     *
+     * @param int $sourceId
+     *
+     * @throws
+     */
+    public function hasAdOnWall(int $sourceId = 140813)
+    {
+        // arrange
+        Carbon::setTestNow('2017-01-01');
+
+        // act
+        $ads = collect($this->service->runWall(['source_id' => $sourceId]));
+
+        // assert
+        $this->assertTrue($ads->isNotEmpty());
     }
 }
