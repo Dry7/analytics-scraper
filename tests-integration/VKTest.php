@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Services;
 
 use App\Services\Html\VKService;
@@ -21,7 +23,7 @@ class VKTest extends \TestCase
     public function tearDown()
     {
         Carbon::setTestNow();
-        $this->sleep(0.2);
+        $this->sleep(1);
     }
 
     function membersDataProvider()

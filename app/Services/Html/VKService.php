@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Html;
 
 use App\Helpers\Utils;
@@ -163,7 +165,7 @@ class VKService
     private function load(string $slug): ?string
     {
         try {
-            $response = $this->client->get(self::BASE_URL . $slug, $this->clientOptions)->getBody();
+            $response = (string)$this->client->get(self::BASE_URL . $slug, $this->clientOptions)->getBody();
 
             if ($this->isRateLimit($response)) {
                 echo "\nrateLimit";
@@ -571,9 +573,9 @@ class VKService
      * @return mixed
      * @throws \Exception
      */
-    public function loadWall(int $groupId, int $offset = 0)
+    public function loadWall(int $groupId, int $offset = 0): string
     {
-        $response = $this->client->request('GET', self::BASE_URL . 'wall-' . $groupId . '?offset=' . $offset, $this->clientOptions + [
+        $response = (string)$this->client->request('GET', self::BASE_URL . 'wall-' . $groupId . '?offset=' . $offset, $this->clientOptions + [
             'query' => [
                 'own' => 1,
                 'offset' => $offset
