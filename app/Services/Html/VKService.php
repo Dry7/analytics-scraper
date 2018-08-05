@@ -253,7 +253,8 @@ class VKService
         }
 
         if (preg_match('#<dl class="pinfo_row"><dt>Место:</dt><dd><a(?: [^>]*)>([^<]*)</a>#i', $html, $city)
-         || preg_match('#<div class="group_info_row address" title="[^"]+"><a href="[^"]+">([^<]*)</a></div>#', $html, $city)) {
+         || preg_match('#<div class="group_info_row address" title="[^"]+"><a href="[^"]+">([^<]*)</a></div>#', $html, $city)
+         || preg_match('#class="address_link">([^<]*)</a>#', $html, $city)) {
             foreach ($this->countryService->findCity($this->decode(strip_tags($city[1]))) as $key => $value) {
                 $result[$key] = $value;
             }

@@ -373,9 +373,7 @@ class VKTest extends \TestCase
     function openedAtDataProvider()
     {
         return [
-            ['club47',    '2006-12-04 00:00:00'],
             ['club1292',  '1809-01-01 00:00:00'],
-            ['club1893',  '2012-01-23 00:00:00'],
             ['public226', null],
             ['club13',    null],
             ['event368',  null],
@@ -439,10 +437,10 @@ class VKTest extends \TestCase
     function addressDataProvider()
     {
         return [
-            ['event525964', ['RU', 'RU-SPE', 498817]],
-            ['club525774',  ['RU', 'RU-MOW', 524901]],
-            ['club523550',  ['UA', 'UA-14', 709717]],
-            ['club497815',  ['BY', null, null]],
+            ['team', ['RU', 'RU-SPE', 498817]],
+            ['gaz',  ['RU', 'RU-MOW', 524901]],
+            ['ababahalamaha.publishers',  ['UA', 'UA-30', 703448]],
+            ['bgk_meshkova',  ['BY', 'BY-BR', '629634']],
             ['club525865',  [null, null, null]],
         ];
     }
@@ -471,7 +469,7 @@ class VKTest extends \TestCase
         return [
             ['event101',        '2015-10-04 00:00:00', null],
             ['event362748',     '2030-04-13 13:00:00', '2030-04-20 19:00:00'],
-            ['englishvacation', '2018-05-28 12:00:00', '2018-08-31 14:00:00'],
+            ['englishvacation', '2018-07-16 12:00:00', '2018-08-31 14:00:00'],
             ['club188598',      null,                  null],
         ];
     }

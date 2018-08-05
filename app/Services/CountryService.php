@@ -54,6 +54,37 @@ class CountryService
         $countryCode = $this->getCountryCode($address) ?? 'RU';
         $stateCode = null;
 
+        foreach ([$countryCode, 'RU', 'UA', 'BY'] as $country) {
+            $city = $this->findStateAndCity($address, $country, $stateCode);
+
+            if (!is_null($city)) {
+                return $city;
+            }
+        }
+//        foreach($this->service->findOneByCode($countryCode)->getStates() as $state) {
+//            if (preg_match('#' . $state->name . '#i', $address)) {
+//                $stateCode = $state->isoCode;
+//            }
+//            foreach ($state->getCities() as $city) {
+//                if (preg_match('#' . $city->name . '#i', $address)) {
+//                    return [
+//                        'country_code' => $countryCode,
+//                        'state_code' => $state->isoCode,
+//                        'city_code' => $city->geonamesCode,
+//                    ];
+//                }
+//            }
+//        }
+
+        return [
+            'country_code' => $this->getCountryCode($address),
+            'state_code' => $stateCode,
+            'city_code' => null,
+        ];
+    }
+
+    private function findStateAndCity(string $address, ?string $countryCode, ?string &$stateCode)
+    {
         foreach($this->service->findOneByCode($countryCode)->getStates() as $state) {
             if (preg_match('#' . $state->name . '#i', $address)) {
                 $stateCode = $state->isoCode;
@@ -69,11 +100,7 @@ class CountryService
             }
         }
 
-        return [
-            'country_code' => $this->getCountryCode($address),
-            'state_code' => $stateCode,
-            'city_code' => null,
-        ];
+        return null;
     }
 
     public function getCountries()
