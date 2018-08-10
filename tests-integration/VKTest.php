@@ -123,7 +123,7 @@ class VKTest extends \TestCase
             ['bestdemotivators', 'Демотиваторы'],
             ['vestifuture',      'Новости из будущего'],
             ['best_girl_ukr',    '&#9829;&#9829;&#9829;За девушек из Украины&#9829;&#9829;&#9829;'],
-            ['art_erotika',      '----АРТ ЭРОТИКА 18+----'],
+            ['art_erotika',      'АРТ ЭРОТИКА'],
             ['originalsclub',    '&#593;did&#593;s / / / Originals'],
             ['club155209',       'БРЮНЕТКИ ПРАВЯТ МИРОМ&#33;&#33;&#33;'],
             ['mfoterminal',      'МКК &quot;Терминал Финанс&quot;'],
