@@ -8,6 +8,8 @@ RUN docker-php-ext-install bcmath
 
 COPY ./ /var/www/analytics/scraper
 
+WORKDIR /var/www/analytics/scraper
+
 COPY php.ini /usr/local/etc/php
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 

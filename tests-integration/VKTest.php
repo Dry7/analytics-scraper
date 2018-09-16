@@ -440,7 +440,7 @@ class VKTest extends \TestCase
             ['team', ['RU', 'RU-SPE', 498817]],
             ['gaz',  ['RU', 'RU-MOW', 524901]],
             ['ababahalamaha.publishers',  ['UA', 'UA-30', 703448]],
-            ['bgk_meshkova',  ['BY', 'BY-BR', '629634']],
+            ['bgkmeshkova',  ['BY', 'BY-BR', '629634']],
             ['club525865',  [null, null, null]],
         ];
     }
@@ -469,7 +469,6 @@ class VKTest extends \TestCase
         return [
             ['event101',        '2015-10-04 00:00:00', null],
             ['event362748',     '2030-04-13 13:00:00', '2030-04-20 19:00:00'],
-            ['englishvacation', '2018-08-27 12:00:00', '2018-08-31 14:00:00'],
             ['club188598',      null,                  null],
         ];
     }
