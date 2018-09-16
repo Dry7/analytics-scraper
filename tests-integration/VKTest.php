@@ -594,17 +594,16 @@ class VKTest extends \TestCase
     /**
      * @test
      *
-     * @param int $sourceId
-     *
      * @throws
      */
-    public function hasAdOnWall(int $sourceId = 140813)
+    public function hasAdOnWall()
     {
         // arrange
         Carbon::setTestNow('2017-01-01');
 
         // act
-        $ads = collect($this->service->runWall(['source_id' => $sourceId]));
+        $ads = collect($this->service->runWall(['source_id' => 140813]))
+            ->filter(function ($item) { return $item['is_ad']; });
 
         // assert
         $this->assertTrue($ads->isNotEmpty());
