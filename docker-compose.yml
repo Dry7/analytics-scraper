@@ -5,22 +5,22 @@ services:
     cap_add: [ 'NET_ADMIN', 'NET_RAW' ]
     restart: on-failure
     environment:
-    - PORTS=0:1024,9000
+      - PORTS=0:1024,9000,5672
 
   php:
     build: ./docker/php
     volumes:
-      - ./:/var/www/html
-    working_dir: /var/www/html
+      - ./:/var/www/analytics/scraper
+    working_dir: /var/www/analytics/scraper
 
   composer:
     build: ./docker/composer
     command: install
     volumes:
-      - ./:/app
+      - .:/app
 
   phpunit:
     build: ./docker/php
     command: vendor/bin/phpunit
     volumes:
-      - ./:/var/www/html
+      - .:/var/www/analytics/scraper

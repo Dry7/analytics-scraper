@@ -100,7 +100,7 @@ class VKService
         if ($processWall && $this->isCheckWall($group)) {
             $group['wall'] = $this->runWall($group);
 
-            if (!is_null($group['last_post_at'])) {
+            if ($group['last_post_at'] instanceof Carbon && !is_string($group['last_post_at'])) {
                 $group['last_post_at'] = $group['last_post_at']->toDateTimeString();
             }
         }
@@ -410,7 +410,7 @@ class VKService
         }
 
         return [
-            'last_post_at' => $lastPostAt,
+            'last_post_at' => $lastPostAt instanceof Carbon ? $lastPostAt->toDateTimeString() : null,
 //            'wall'         => $posts,
         ];
     }
