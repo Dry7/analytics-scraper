@@ -358,9 +358,9 @@ class VKService
 
         foreach ($images[1] as $i => $url) {
             $contacts[] = [
-                'avatar' => $images[2][$i],
+                'avatar' => $this->normalizeUrl($images[2][$i]),
                 'name' => $this->decode($images[3][$i]),
-                'url' => $url,
+                'url' => $this->normalizeUrl($url),
             ];
         }
 
@@ -817,5 +817,10 @@ class VKService
     private function decode(string $text): string
     {
         return iconv('cp1251', 'utf-8', $text);
+    }
+
+    private function normalizeUrl(string $image): string
+    {
+        return !preg_match('#^http#', $image) ? 'https://vk.com' . $image : $image;
     }
 }
