@@ -83,7 +83,7 @@ class VKService
      *
      * @return array|null
      *
-     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function scraper(string $slug, $processWall = true): ?array
     {
@@ -113,7 +113,7 @@ class VKService
      *
      * @return array
      *
-     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function runWall(array $group)
     {
@@ -147,7 +147,7 @@ class VKService
      * @param array $group
      * @return bool
      */
-    public function isCheckWall(array $group): bool
+    private function isCheckWall(array $group): bool
     {
         return !$group['is_closed']
             && !$group['is_banned']
@@ -210,6 +210,7 @@ class VKService
             'city_code'    => null,
             'event_start'  => null,
             'event_end'    => null,
+            'contacts'     => [],
         ];
 
         if (preg_match('#<title>(.*)</title>#i', $html, $title)) {
@@ -337,11 +338,33 @@ class VKService
             }
         }
 
+        $result['contacts'] = $this->parseContacts($html);
+
         foreach ($this->loadWallFromGroup($html) as $key => $val) {
             $result[$key] = $val;
         }
 
         return $result;
+    }
+
+    private function parseContacts(string $html): array
+    {
+        preg_match_all('#fl_l thumb">\s+<a\s+href="([^"]+)"><img\s+class="cell_img"\s+src="([^"]+)"\s+alt="([^"]*)"#', $html, $images);
+        if (empty($images[1])) {
+            preg_match_all('#<a\s+href="([^"]+)"\s+class="line_cell\s+clear_fix">\s+<div class="fl_l\s+thumb">\s+<img\s+class="cell_img"\s+src="([^"]+)"\s+alt="([^"]+)"#', $html, $images);
+        }
+
+        $contacts = [];
+
+        foreach ($images[1] as $i => $url) {
+            $contacts[] = [
+                'avatar' => $images[2][$i],
+                'name' => $this->decode($images[3][$i]),
+                'url' => $url,
+            ];
+        }
+
+        return $contacts;
     }
 
     /**
@@ -350,7 +373,7 @@ class VKService
      * @param string $html
      * @return array
      */
-    public function loadWallFromGroup(string $html)
+    private function loadWallFromGroup(string $html)
     {
         $lastPostAt = null;
 
@@ -415,7 +438,7 @@ class VKService
         ];
     }
 
-    public function mergeCounts(array $keys, array $values): array
+    private function mergeCounts(array $keys, array $values): array
     {
         $array = [];
 
@@ -571,10 +594,10 @@ class VKService
     /**
      * @param int $groupId
      * @param int $offset
-     * @return mixed
-     * @throws \Exception
+     * @return string
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function loadWall(int $groupId, int $offset = 0): string
+    private function loadWall(int $groupId, int $offset = 0): string
     {
         $response = (string)$this->client->request('GET', self::BASE_URL . 'wall-' . $groupId . '?offset=' . $offset, $this->clientOptions + [
             'query' => [
@@ -595,7 +618,7 @@ class VKService
      * @param int $groupId
      * @param int $offset
      * @return \Generator
-     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     private function wall(int $groupId, int $offset = 0): \Generator
     {
@@ -633,7 +656,7 @@ class VKService
      * @param \DOMElement $post
      * @return int|null
      */
-    public function getPostId(\DOMXPath &$xpath, \DOMElement &$post): ?int
+    private function getPostId(\DOMXPath &$xpath, \DOMElement &$post): ?int
     {
         $id = $xpath->query('.//a[contains(@class, "post__anchor")]', $post);
 
@@ -649,7 +672,7 @@ class VKService
      * @param \DOMElement $post
      * @return Carbon|null
      */
-    public function getPostDate(\DOMXPath &$xpath, \DOMElement &$post)
+    private function getPostDate(\DOMXPath &$xpath, \DOMElement &$post)
     {
         $date = $xpath->query('.//a[@class="wi_date"]', $post);
 
@@ -666,22 +689,13 @@ class VKService
         return $this->date2carbon($date[0]->textContent);
     }
 
-    function get_inner_html( $node ) {
-        $innerHTML= '';
-        $children = $node->childNodes;
-        foreach ($children as $child) {
-            $innerHTML .= $child->ownerDocument->saveXML( $child );
-        }
-        return $innerHTML;
-    }
-
     /**
      * @param \DOMXPath $xpath
      * @param \DOMElement $post
      * @param string $element
      * @return int
      */
-    public function getCount(\DOMXPath &$xpath, \DOMElement &$post, string $element): int
+    private function getCount(\DOMXPath &$xpath, \DOMElement &$post, string $element): int
     {
         $count = $xpath->query('.//b[@class="v_' . $element . '"]', $post);
 
@@ -701,7 +715,7 @@ class VKService
         return $this->getNumber($count);
     }
 
-    public function getPostViews(\DOMXPath &$xpath, \DOMElement &$post)
+    private function getPostViews(\DOMXPath &$xpath, \DOMElement &$post)
     {
         $count = $xpath->query('.//div[contains(@class, "like_wrap _like_wall-")]//div[contains(@class, "like_views _views")]', $post);
 
@@ -712,7 +726,7 @@ class VKService
         return $this->getNumber($count[0]->textContent);
     }
 
-    public function getNumber(string $count): int
+    private function getNumber(string $count): int
     {
         $multiplier = 1;
         if (preg_match('#\dK#i', $count)) {
@@ -731,7 +745,7 @@ class VKService
      * @param \DOMElement $post
      * @return int
      */
-    public function getComments(\DOMXPath &$xpath, \DOMElement &$post): int
+    private function getComments(\DOMXPath &$xpath, \DOMElement &$post): int
     {
         try {
             $comments = $xpath->query('.//a[@class="wr_header"]', $post);
@@ -749,7 +763,7 @@ class VKService
      * @param \DOMElement $post
      * @return bool
      */
-    public function getPostPinned(\DOMXPath &$xpath, \DOMElement &$post): bool
+    private function getPostPinned(\DOMXPath &$xpath, \DOMElement &$post): bool
     {
         return in_array('post_fixed', explode(' ', $post->getAttribute('class')));
     }
@@ -759,7 +773,7 @@ class VKService
      * @param \DOMElement $post
      * @return bool
      */
-    public function getPostAd(\DOMXPath &$xpath, \DOMElement &$post): bool
+    private function getPostAd(\DOMXPath &$xpath, \DOMElement &$post): bool
     {
         return $xpath->query('.//div[@class="wall_marked_as_ads"]', $post)->length > 0;
     }
@@ -769,7 +783,7 @@ class VKService
      * @param \DOMElement $post
      * @return array
      */
-    public function getPostLinks(\DOMXPath &$xpath, \DOMElement &$post): array
+    private function getPostLinks(\DOMXPath &$xpath, \DOMElement &$post): array
     {
         $urls = [];
         try {
@@ -789,7 +803,7 @@ class VKService
      * @param string $url
      * @return string
      */
-    public function getLinkFromQueryString(string $url): string
+    private function getLinkFromQueryString(string $url): string
     {
         parse_str(parse_url($url)['query'], $result);
 
@@ -800,7 +814,7 @@ class VKService
      * @param string $text
      * @return string
      */
-    public function decode(string $text): string
+    private function decode(string $text): string
     {
         return iconv('cp1251', 'utf-8', $text);
     }

@@ -343,7 +343,7 @@ class VKTest extends \TestCase
             ['club40',    true],
             ['club26',    false],
             ['vnorilske', false],
-            ['club33',    false],
+            ['club34',    false],
         ];
     }
 
@@ -607,5 +607,184 @@ class VKTest extends \TestCase
 
         // assert
         $this->assertTrue($ads->isNotEmpty());
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider contactsDataProvider
+     *
+     * @param string $slug
+     * @param array $expected
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function contacts(string $slug, array $expected)
+    {
+        // act
+        $data = $this->service->scraper($slug, false);
+
+        // assert
+        $this->assertSame($expected, $data['contacts']);
+    }
+
+    public function contactsDataProvider()
+    {
+        return [
+            [
+                'club1959',
+                [
+                    [
+                            'avatar' => 'https://pp.userapi.com/c629111/v629111007/7aa63/YzvIv1CD2Cg.jpg?ava=1',
+                            'name' => 'Андрей Резников',
+                            'url' => '/andreireznikov',
+                    ],
+                    [
+                            'avatar' => 'https://pp.userapi.com/c841435/v841435392/76d33/a9YMzaI4NgQ.jpg?ava=1',
+                            'name' => 'Анна Резникова',
+                            'url' => '/id136722',
+                    ],
+                    [
+                            'avatar' => 'https://pp.userapi.com/c841529/v841529667/58e79/NseF7iEhWsc.jpg?ava=1',
+                            'name' => 'Tanya Gubanova',
+                            'url' => '/tatyanagubanova',
+                    ],
+                    [
+                            'avatar' => 'https://pp.userapi.com/c831309/v831309317/176117/B3Rq2TDACH8.jpg?ava=1',
+                            'name' => 'Алексей Оболевич',
+                            'url' => '/muzred_record',
+                    ],
+                    [
+                            'avatar' => 'https://pp.userapi.com/c623830/v623830450/35148/gBmOkF8QJZ8.jpg?ava=1',
+                            'name' => 'Егор Поляков',
+                            'url' => '/polyakov',
+                    ],
+                ]
+            ],
+            [
+                'tvcomedy',
+                [
+                    [
+                        'avatar' => 'https://pp.userapi.com/c840235/v840235623/7e7c8/68GUOjopCdM.jpg?ava=1',
+                        'name' => 'Стас Кбржданский',
+                        'url' => '/stascomedy',
+                    ],
+                    [
+                        'avatar' => 'https://pp.userapi.com/c840621/v840621644/c8fd/m-z5pcCAXHo.jpg?ava=1',
+                        'name' => 'Михаил Рылявский',
+                        'url' => '/mihcomedy',
+                    ],
+                ],
+            ],
+            [
+                'megafon',
+                [
+                    [
+                        'avatar' => 'https://pp.userapi.com/c840537/v840537688/cab6/TTOb6JL25GY.jpg?ava=1',
+                        'name' => 'Юлия Мегафон',
+                        'url' => '/megafon_cf_help',
+                    ],
+                    [
+                        'avatar' => 'https://pp.userapi.com/c639920/v639920334/491f7/I1N5OYNcBbg.jpg?ava=1',
+                        'name' => 'Сергей Мегафон',
+                        'url' => '/id175509986',
+                    ],
+                    [
+                        'avatar' => 'https://pp.userapi.com/c834101/v834101483/1c8bb/wyeQTDNwLDI.jpg?ava=1',
+                        'name' => 'Елена Фадеева',
+                        'url' => '/megafonsibir',
+                    ],
+                    [
+                        'avatar' => 'https://pp.userapi.com/c837220/v837220247/4f281/vVni1jj06PA.jpg?ava=1',
+                        'name' => 'Мария Мегафон',
+                        'url' => '/megafonvolga_help',
+                    ],
+                    [
+                        'avatar' => 'https://pp.userapi.com/c639224/v639224985/42051/hu-c5Z9suSM.jpg?ava=1',
+                        'name' => 'Олег &amp;#922;олесников',
+                        'url' => '/megafonszhelp',
+                    ],
+                ]
+            ],
+            [
+                'astromo',
+                [
+                    [
+                        'avatar' => 'https://pp.userapi.com/c9848/u9443299/e_51b153b2.jpg?ava=1',
+                        'name' => 'Karina Sviridova',
+                        'url' => '/karinasviridova',
+                    ],
+                ],
+            ],
+            [
+                'club24',
+                [
+                    [
+                        'avatar' => 'https://pp.userapi.com/c71/u49186/e_e231de63.jpg?ava=1',
+                        'name' => 'Олег Княгинин',
+                        'url' => '/id49186',
+                    ],
+                    [
+                        'avatar' => 'https://pp.userapi.com/c301707/v301707365/4ee3/u2EFpalnY9U.jpg?ava=1',
+                        'name' => 'Станислав Вахитов',
+                        'url' => '/svahitov',
+                    ],
+                    [
+                        'avatar' => 'https://pp.userapi.com/c637130/v637130219/8121/QShqWj4bw7c.jpg?ava=1',
+                        'name' => 'Майкл Сенин',
+                        'url' => '/mikesenin',
+                    ],
+                    [
+                        'avatar' => 'https://pp.userapi.com/c536/u00039/e_c1035f8a.jpg?ava=1',
+                        'name' => 'David Mirelli',
+                        'url' => '/id39',
+                    ],
+                    [
+                        'avatar' => 'https://pp.userapi.com/c836335/v836335129/7c711/a2ILVbRlKFM.jpg?ava=1',
+                        'name' => 'Евгений Прохоров',
+                        'url' => '/id96063866',
+                    ],
+                ],
+            ],
+            [
+                'dnbclub',
+                [
+                    [
+                        'avatar' => 'https://pp.userapi.com/c9508/v9508112/915/FtIs0YQ8d5E.jpg?ava=1',
+                        'name' => 'Павел Барыгин',
+                        'url' => '/id53112',
+                    ],
+                    [
+                        'avatar' => 'https://pp.userapi.com/c846417/v846417842/3d5ed/TkQ-nUfLk7E.jpg?ava=1',
+                        'name' => 'Аня Савченко',
+                        'url' => '/id25025',
+                    ],
+                    [
+                        'avatar' => 'https://pp.userapi.com/c847016/v847016948/12206/SpQRh16wVDY.jpg?ava=1',
+                        'name' => 'Илья Земсков',
+                        'url' => '/mistwist',
+                    ],
+                    [
+                        'avatar' => 'https://pp.userapi.com/c845323/v845323538/b8896/Rq2W8lr_L4Q.jpg?ava=1',
+                        'name' => 'Ольга Орлова',
+                        'url' => '/orlovadnb',
+                    ],
+                ],
+            ],
+            [
+                'public12648877',
+                [
+                    [
+                        'avatar' => 'https://pp.userapi.com/c316123/u29647021/e_28a2cd17.jpg?ava=1',
+                        'name' => 'Владимир Щербаков',
+                        'url' => '/smm_consulting',
+                    ],
+                    [
+                        'avatar' => 'https://pp.userapi.com/c630427/v630427305/2cb65/ryogPWokO0o.jpg?ava=1',
+                        'name' => 'Vladimir Belikov',
+                        'url' => '/id80725305',
+                    ],
+                ]
+            ]
+        ];
     }
 }
