@@ -653,11 +653,6 @@ class VKTest extends \TestCase
                             'name' => 'Алексей Оболевич',
                             'url' => 'https://vk.com/muzred_record',
                     ],
-                    [
-                            'avatar' => 'https://pp.userapi.com/c623830/v623830450/35148/gBmOkF8QJZ8.jpg?ava=1',
-                            'name' => 'Егор Поляков',
-                            'url' => 'https://vk.com/polyakov',
-                    ],
                 ]
             ],
             [
@@ -739,9 +734,9 @@ class VKTest extends \TestCase
                         'url' => 'https://vk.com/id39',
                     ],
                     [
-                        'avatar' => 'https://pp.userapi.com/c836335/v836335129/7c711/a2ILVbRlKFM.jpg?ava=1',
-                        'name' => 'Евгений Прохоров',
-                        'url' => 'https://vk.com/id96063866',
+                        'avatar' => 'https://pp.userapi.com/xdrhF3pojHjw8HdbKIZ5GwFczhOap6Hzqbp5SQ/qJsXjsoM0Uk.jpg?ava=1',
+                        'name' => 'Ренат Садеков',
+                        'url' => 'https://vk.com/rin4ik0',
                     ],
                 ],
             ],
@@ -754,7 +749,7 @@ class VKTest extends \TestCase
                         'url' => 'https://vk.com/id53112',
                     ],
                     [
-                        'avatar' => 'https://pp.userapi.com/c846417/v846417842/3d5ed/TkQ-nUfLk7E.jpg?ava=1',
+                        'avatar' => 'https://pp.userapi.com/c852036/v852036596/1d917/WgPgL8XNaGQ.jpg?ava=1',
                         'name' => 'Аня Савченко',
                         'url' => 'https://vk.com/id25025',
                     ],
@@ -764,7 +759,7 @@ class VKTest extends \TestCase
                         'url' => 'https://vk.com/mistwist',
                     ],
                     [
-                        'avatar' => 'https://pp.userapi.com/c845323/v845323538/b8896/Rq2W8lr_L4Q.jpg?ava=1',
+                        'avatar' => 'https://pp.userapi.com/c852028/v852028522/11857/ngunVvhRSBA.jpg?ava=1',
                         'name' => 'Ольга Орлова',
                         'url' => 'https://vk.com/orlovadnb',
                     ],
