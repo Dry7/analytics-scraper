@@ -165,10 +165,9 @@ class VKService
     private function load(string $slug): ?string
     {
         try {
-            $response = (string)$this->client->get(self::BASE_URL . $slug, $this->clientOptions)->getBody();
+            $response = $this->client->get(self::BASE_URL . $slug, $this->clientOptions)->getBody()->getContents();
 
             if ($this->isRateLimit($response)) {
-                echo "\nrateLimit";
                 sleep(5);
                 throw new \Exception('VK rate limit exceeded');
             }
