@@ -526,22 +526,22 @@ class VKTest extends \TestCase
         return [
             [6307, '2016-01-01 00:00:00',
                 [
-                    ['id' => 2409, 'date' => '2016-02-25 00:00:00', 'likes' => 4, 'shares' => 0, 'views' => 0, 'comments' => 0, 'is_pinned' => false, 'is_ad' => false, 'links' => []],
-                    ['id' => 2408, 'date' => '2016-02-24 00:00:00', 'likes' => 0, 'shares' => 0, 'views' => 0, 'comments' => 0, 'is_pinned' => false, 'is_ad' => false, 'links' => []],
+                    ['id' => 2409, 'date' => '2016-02-25 00:00:00', 'likes' => 4, 'shares' => 0, 'views' => 0, 'comments' => 0, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => []],
+                    ['id' => 2408, 'date' => '2016-02-24 00:00:00', 'likes' => 0, 'shares' => 0, 'views' => 0, 'comments' => 0, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => []],
                 ]
             ],
             [376606, '2016-01-01 00:00:00',
                 [
-                    ['id' => 1110, 'date' => '2016-10-07 00:00:00', 'likes' => 0,  'shares' => 0, 'views' => 0, 'comments' => 0,  'is_pinned' => false, 'is_ad' => false, 'links' => ['http://run.myviasat.ru/',]],
-                    ['id' => 1108, 'date' => '2016-10-03 00:00:00', 'likes' => 10, 'shares' => 0, 'views' => 0, 'comments' => 2,  'is_pinned' => false, 'is_ad' => false, 'links' => []],
-                    ['id' => 1106, 'date' => '2016-10-03 00:00:00', 'likes' => 18, 'shares' => 5, 'views' => 0, 'comments' => 0,  'is_pinned' => false, 'is_ad' => false, 'links' => []],
-                    ['id' => 1070, 'date' => '2016-09-30 00:00:00', 'likes' => 31, 'shares' => 2, 'views' => 0, 'comments' => 25, 'is_pinned' => false, 'is_ad' => false, 'links' => []],
-                    ['id' => 1062, 'date' => '2016-09-30 00:00:00', 'likes' => 49, 'shares' => 3, 'views' => 0, 'comments' => 17, 'is_pinned' => false, 'is_ad' => false, 'links' => []],
+                    ['id' => 1110, 'date' => '2016-10-07 00:00:00', 'likes' => 0,  'shares' => 0, 'views' => 0, 'comments' => 0,  'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => ['http://run.myviasat.ru/',]],
+                    ['id' => 1108, 'date' => '2016-10-03 00:00:00', 'likes' => 10, 'shares' => 0, 'views' => 0, 'comments' => 2,  'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => []],
+                    ['id' => 1106, 'date' => '2016-10-03 00:00:00', 'likes' => 18, 'shares' => 5, 'views' => 0, 'comments' => 0,  'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => []],
+                    ['id' => 1070, 'date' => '2016-09-30 00:00:00', 'likes' => 31, 'shares' => 2, 'views' => 0, 'comments' => 25, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => []],
+                    ['id' => 1062, 'date' => '2016-09-30 00:00:00', 'likes' => 49, 'shares' => 3, 'views' => 0, 'comments' => 17, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => []],
                 ]
             ],
             [407223, '2012-01-01 00:00:00',
                 [
-                    ['id' => 15, 'date' => '2012-05-07 00:00:00', 'likes' => 0, 'shares' => 0, 'views' => 0, 'comments' => 0, 'is_pinned' => false, 'is_ad' => false, 'links' => []]
+                    ['id' => 15, 'date' => '2012-05-07 00:00:00', 'likes' => 0, 'shares' => 0, 'views' => 0, 'comments' => 0, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => []]
                 ]
             ],
         ];
@@ -606,7 +606,75 @@ class VKTest extends \TestCase
             ->filter(function ($item) { return $item['is_ad']; });
 
         // assert
-        $this->assertTrue($ads->isNotEmpty());
+        $this->assertNotEmpty($ads);
+    }
+
+    public static function postVideoDataProvider()
+    {
+        return [
+            [9562, '2016-04-18 00:00:00', 24321187, 456239093],
+            [7868, '2016-05-16 00:00:00', 16366828, 456239044],
+        ];
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider postVideoDataProvider
+     *
+     * @param int $sourceId
+     * @param string $date
+     * @param int $expectedVideoGroupId
+     * @param int $expectedVideoId
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function postVideo(int $sourceId, string $date, int $expectedVideoGroupId, int $expectedVideoId)
+    {
+        Carbon::setTestNow($date);
+
+        // act
+        $wall = collect($this->service->runWall(['source_id' => $sourceId]))->filter(function ($item) use ($expectedVideoGroupId, $expectedVideoId) {
+            return $item['is_video'] === true
+                && $item['video_group_id'] === $expectedVideoGroupId
+                && $item['video_id'] === $expectedVideoId;
+        });
+
+        // assert
+        $this->assertNotEmpty($wall);
+    }
+
+    public static function postGifDataProvider()
+    {
+        return [
+            [7606, '2017-01-01 00:00:00', 470000],
+            [4504, '2017-02-1500:00:00', 170039],
+        ];
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider postGifDataProvider
+     *
+     * @param int $sourceId
+     * @param string $date
+     * @param int $expectedPostId
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function postGif(int $sourceId, string $date, int $expectedPostId)
+    {
+        Carbon::setTestNow($date);
+
+        // act
+        $wall = collect($this->service->runWall(['source_id' => $sourceId]))->filter(function ($item) use ($expectedPostId) {
+            return $item['id'] === $expectedPostId
+                && $item['is_gif'] === true;
+        });
+
+        // assert
+        $this->assertNotEmpty($wall);
     }
 
     /**
@@ -734,7 +802,7 @@ class VKTest extends \TestCase
                         'url' => 'https://vk.com/id39',
                     ],
                     [
-                        'avatar' => 'https://pp.userapi.com/xdrhF3pojHjw8HdbKIZ5GwFczhOap6Hzqbp5SQ/qJsXjsoM0Uk.jpg?ava=1',
+                        'avatar' => 'https://sun1-13.userapi.com/xdrhF3pojHjw8HdbKIZ5GwFczhOap6Hzqbp5SQ/qJsXjsoM0Uk.jpg?ava=1',
                         'name' => 'Ренат Садеков',
                         'url' => 'https://vk.com/rin4ik0',
                     ],

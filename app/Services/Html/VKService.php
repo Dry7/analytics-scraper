@@ -636,6 +636,8 @@ class VKService
 
         /** @var \DOMElement $posts */
         foreach ($posts as $post) {
+            $video = $this->getPostVideo($xpath, $post);
+
             yield [
                 'id' => $this->getPostId($xpath, $post),
                 'date' => $this->getPostDate($xpath, $post)->toDateTimeString(),
@@ -645,6 +647,10 @@ class VKService
                 'comments' => $this->getComments($xpath, $post),
                 'is_pinned' => $this->getPostPinned($xpath, $post),
                 'is_ad' => $this->getPostAd($xpath, $post),
+                'is_gif' => $this->isPostHasGif($xpath, $post),
+                'is_video' => !is_null($video),
+                'video_group_id' => (int)$video['group_id'] ?: null,
+                'video_id' => (int)$video['video_id'] ?: null,
                 'links' => $this->getPostLinks($xpath, $post),
             ];
         }
@@ -796,6 +802,35 @@ class VKService
         } catch (\Exception $exception) {
             return $urls;
         }
+    }
+
+    /**
+     * @param \DOMXPath $xpath
+     * @param \DOMElement $post
+     * @return array|null
+     */
+    private function getPostVideo(\DOMXPath &$xpath, \DOMElement &$post): ?array
+    {
+        $html = $post->ownerDocument->saveHTML($post);
+
+        if (preg_match('#return\s+showVideo\(\'-(\d+)_(\d+)\'#i', $html, $video)) {
+            return [
+                'group_id' => $video[1],
+                'video_id' => $video[2],
+            ];
+        }
+
+        return null;
+    }
+
+    /**
+     * @param \DOMXPath $xpath
+     * @param \DOMElement $post
+     * @return bool
+     */
+    private function isPostHasGif(\DOMXPath &$xpath, \DOMElement &$post): bool
+    {
+        return $xpath->query('.//div[@class="page_gif_play_icon"]', $post)->length > 0;
     }
 
     /**
