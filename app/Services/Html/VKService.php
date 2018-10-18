@@ -637,6 +637,7 @@ class VKService
         /** @var \DOMElement $posts */
         foreach ($posts as $post) {
             $video = $this->getPostVideo($xpath, $post);
+            $sharedPost = $this->getSharedPost($xpath, $post);
 
             yield [
                 'id' => $this->getPostId($xpath, $post),
@@ -651,6 +652,8 @@ class VKService
                 'is_video' => !is_null($video),
                 'video_group_id' => (int)$video['group_id'] ?: null,
                 'video_id' => (int)$video['video_id'] ?: null,
+                'shared_group_id' => (int)$sharedPost['group_id'] ?: null,
+                'shared_post_id' => (int)$sharedPost['post_id'] ?: null,
                 'links' => $this->getPostLinks($xpath, $post),
             ];
         }
@@ -811,13 +814,17 @@ class VKService
      */
     private function getPostVideo(\DOMXPath &$xpath, \DOMElement &$post): ?array
     {
-        $html = $post->ownerDocument->saveHTML($post);
+        $video = $xpath->query('.//div[contains(@class, "wall_text")]//div[contains(@class, "post_video_desc")]', $post)->item(0);
 
-        if (preg_match('#return\s+showVideo\(\'-(\d+)_(\d+)\'#i', $html, $video)) {
-            return [
-                'group_id' => $video[1],
-                'video_id' => $video[2],
-            ];
+        if ($video) {
+            $html = $video->ownerDocument->saveHTML($video);
+
+            if (preg_match('#return\s+showVideo\(\'-*(\d+)_(\d+)\'#i', $html, $video)) {
+                return [
+                    'group_id' => $video[1],
+                    'video_id' => $video[2],
+                ];
+            }
         }
 
         return null;
@@ -831,6 +838,27 @@ class VKService
     private function isPostHasGif(\DOMXPath &$xpath, \DOMElement &$post): bool
     {
         return $xpath->query('.//div[@class="page_gif_play_icon"]', $post)->length > 0;
+    }
+
+    /**
+     * @param \DOMXPath $xpath
+     * @param \DOMElement $post
+     * @return array|null
+     */
+    private function getSharedPost(\DOMXPath &$xpath, \DOMElement &$post): ?array
+    {
+        $link = $xpath->query('.//a[contains(@class, "copy_author")]', $post);
+
+        if ($link->length > 0) {
+            $sharedPost = explode('_', $link->item(0)->getAttribute('data-post-id'));
+
+            return count($sharedPost) === 2 ? [
+                'group_id' => $sharedPost[0],
+                'post_id' => $sharedPost[1],
+            ] : null;
+        }
+
+        return null;
     }
 
     /**
