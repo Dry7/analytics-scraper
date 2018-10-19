@@ -24,15 +24,25 @@ class ScraperService
         $this->logger = $logger;
     }
 
-    public function send(string $networkCode, array $group)
+    public function sendPostExportHash(string $networkCode, array $data): void
     {
-        $this->logger->log($networkCode, $group);
+        $this->send($this->backendHost . '/api/'  . $networkCode . '/posts/export-hash', $networkCode, $data);
+    }
 
-        $this->client->post($this->backendHost . '/api/'  . $networkCode . '/register', [
+    public function sendGroup(string $networkCode, array $data): void
+    {
+        $this->send($this->backendHost . '/api/'  . $networkCode . '/register', $networkCode, $data);
+    }
+
+    private function send(string $url, string $networkCode, array $data)
+    {
+        $this->logger->log($networkCode, $data);
+
+        $this->client->post($url, [
             'headers' => [
                 'X-API-KEY' => config('scraper.api_key'),
             ],
-            'json' => $group,
+            'json' => $data,
         ]);
     }
 }

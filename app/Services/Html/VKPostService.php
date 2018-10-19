@@ -30,9 +30,14 @@ class VKPostService
     {
         $this->client = $client;
 
-        if (!empty(config('adspy.ips'))) {
+        if (!empty(config('scraper.ips'))) {
             $this->clientOptions['curl'] = [
-                CURLOPT_INTERFACE => Utils::randomArrayValue(config('adspy.ips')),
+                CURLOPT_INTERFACE => Utils::randomArrayValue(config('scraper.ips')),
+            ];
+        }
+        if (!empty(config('scraper.vk_keys'))) {
+            $this->clientOptions['headers'] = [
+                'cookie' => 'remixsid=' . Utils::randomArrayValue(config('scraper.vk_keys')),
             ];
         }
     }
@@ -40,9 +45,7 @@ class VKPostService
     public function exportHash(int $wallId, int $postId): ?string
     {
         $response = $this->client->post(self::BASE_URL . 'like.php', [
-            'headers' => array_merge($this->clientOptions['headers'], [
-                'cookie' => 'remixsid=1e3209ad2fcfa3727ee801d6f2074de78b53e0a2704f509360a07',
-            ]),
+            'headers' => $this->clientOptions['headers'],
             'form_params' => [
                 'act' => 'publish_box',
                 'al' => '1',
@@ -53,6 +56,8 @@ class VKPostService
         if (preg_match('#\{preview:\s+\d+,\s+width:\s+%width%\},\s+\'([^\']+)\'\)",\s+data#i', $response, $hash)) {
             return $hash[1];
         }
+
+        sleep(1);
 
         return null;
     }

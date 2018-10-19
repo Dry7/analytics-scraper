@@ -42,21 +42,16 @@ class UpdateGroupJob extends Job
     }
 
     /**
-     * Execute the job.
-     *
      * @param VKService $service
      * @param ScraperService $scraper
-     *
-     * @return void
-     *
-     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function handle(VKService $service, ScraperService $scraper)
     {
         $data = $service->scraper($this->url);
 
         if (!is_null($data)) {
-            $scraper->send(Network::getCode($this->networkId), $data);
+            $scraper->sendGroup(Network::getCode($this->networkId), $data);
         }
     }
 }

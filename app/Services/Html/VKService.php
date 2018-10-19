@@ -853,8 +853,8 @@ class VKService
             $sharedPost = explode('_', $link->item(0)->getAttribute('data-post-id'));
 
             return count($sharedPost) === 2 ? [
-                'group_id' => $sharedPost[0],
-                'post_id' => $sharedPost[1],
+                'group_id' => abs($sharedPost[0]),
+                'post_id' => abs($sharedPost[1]),
             ] : null;
         }
 
