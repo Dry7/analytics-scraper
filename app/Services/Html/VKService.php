@@ -6,6 +6,7 @@ namespace App\Services\Html;
 
 use App\Helpers\Utils;
 use App\Services\CountryService;
+use App\Services\Html\Parsers\VKDate;
 use App\Types\Type;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
@@ -27,6 +28,9 @@ class VKService
 
     /** @var Client */
     private $client;
+
+    /** @var VKDate */
+    private $date;
 
     /** @var array */
     private $clientOptions = [
@@ -50,6 +54,7 @@ class VKService
     /**
      * VKService constructor.
      * @param Client $client
+     * @param VKDate $date
      * @param CountryService $countryService
      * @param int $maxWallPages
      * @param int $maxWallDate
@@ -57,6 +62,7 @@ class VKService
      */
     public function __construct(
         Client $client,
+        VKDate $date,
         CountryService $countryService,
         int $maxWallPages = 5,
         int $maxWallDate = 2,
@@ -64,6 +70,7 @@ class VKService
     )
     {
         $this->client = $client;
+        $this->date = $date;
 
         if (!empty(config('adspy.ips'))) {
             $this->clientOptions['curl'] = [
@@ -248,8 +255,9 @@ class VKService
         }
 
         if (preg_match('#<dt>Дата основания:</dt><dd>(.*)</dd>#i', $html, $opened_at)
-         || preg_match('#<div class="group_info_row date" title="[^"]+">([^<]*)</div>#i', $html, $opened_at)) {
-            $result['opened_at'] = $this->date2carbon($this->decode($opened_at[1]))->toDateTimeString();
+         || preg_match('#<div class="group_info_row date" title="[^"]+">([^<]*)</div>#i', $html, $opened_at)
+         || preg_match('#<div class="group_info_row date" title="[^"]*">\s*<div class="line_value">([^<]*)</div>\s*</div>#i', $html, $opened_at)) {
+            $result['opened_at'] = $this->date->parse($this->decode($opened_at[1]))->toDateTimeString();
         }
 
         if (preg_match('#<dl class="pinfo_row"><dt>Место:</dt><dd><a(?: [^>]*)>([^<]*)</a>#i', $html, $city)
@@ -262,19 +270,20 @@ class VKService
 
         if (preg_match('#<dt>Начало:</dt><dd>([^>]*)</dd>#i', $html, $event_start)
          || preg_match('#<div class="group_info_row time" title="[^"]+">([^<]*)</div>#', $html, $event_start)
+         || preg_match('#<div class="group_info_row time" title="[^"]+">\s*<div class="line_value">([^<]*)</div>\s*</div>#', $html, $event_start)
          || preg_match('#<div class="group_info_row soon" title="[^"]+">([^<]*)</div>#', $html, $event_start)) {
             $event_start = preg_replace('#Событие состоялось#i', '', $this->decode($event_start[1]));
             if (strpos($event_start, '&mdash;') !== false) {
                 $events = explode('&mdash;', $event_start);
-                $result['event_start'] = $this->date2carbon(trim($events[0]))->toDateTimeString();
-                $result['event_end'] = $this->date2carbon(trim($events[1]))->toDateTimeString();
+                $result['event_start'] = $this->date->parse(trim($events[0]))->toDateTimeString();
+                $result['event_end'] = $this->date->parse(trim($events[1]))->toDateTimeString();
             } else {
-                $result['event_start'] = $this->date2carbon(trim($event_start))->toDateTimeString();
+                $result['event_start'] = $this->date->parse(trim($event_start))->toDateTimeString();
             }
         }
 
         if (preg_match('#<dt>Окончание:</dt><dd>([^>]*)</dd>#i', $html, $event_end)) {
-            $result['event_end'] = $this->date2carbon($event_end[1])->toDateTimeString();
+            $result['event_end'] = $this->date->parse($event_end[1])->toDateTimeString();
         }
 
         if (preg_match('#<img src="(.*)" class="pp_img#i', $html, $avatar)
@@ -418,7 +427,7 @@ class VKService
         $views  = $this->mergeCounts((array)@$views[1], (array)@$views[2]);
 
         foreach ($ids[1] as $i => $id) {
-            $date = $this->date2carbon($this->decode($dates[$id]));
+            $date = $this->date->parse($this->decode($dates[$id]));
             if (is_null($lastPostAt) || $date > $lastPostAt) {
                 $lastPostAt = $date;
             }
@@ -446,148 +455,6 @@ class VKService
         }
 
         return $array;
-    }
-
-    /**
-     * @param string $date
-     * @return Carbon
-     */
-    public function date2carbon(string $date)
-    {
-        switch ($date) {
-            case 'только что':
-                return Carbon::now();
-
-            case 'минуту назад':
-            case 'одну минуту назад':
-                return Carbon::now()->subMinute();
-
-            case 'две минуты назад':
-                return Carbon::now()->subMinutes(2);
-
-            case 'три минуты назад':
-                return Carbon::now()->subMinutes(3);
-
-            case 'четыре минуты назад':
-                return Carbon::now()->subMinutes(4);
-
-            case 'пять минут назад':
-                return Carbon::now()->subMinutes(5);
-
-            case 'шесть минут назад':
-                return Carbon::now()->subMinutes(6);
-
-            case 'семь минут назад':
-                return Carbon::now()->subMinutes(7);
-
-            case 'восемь минут назад':
-                return Carbon::now()->subMinutes(8);
-
-            case 'девять минут назад':
-                return Carbon::now()->subMinutes(9);
-
-            case 'десять минут назад':
-                return Carbon::now()->subMinutes(10);
-
-            case 'час назад':
-                return Carbon::now()->subHour()->second(0);
-
-            case 'два часа назад':
-                return Carbon::now()->subHours(2)->second(0);
-
-            case 'три часа назад':
-                return Carbon::now()->subHours(3)->second(0);
-
-            case 'четыре часа назад':
-                return Carbon::now()->subHours(4)->second(0);
-
-            case 'пять часов назад':
-                return Carbon::now()->subHours(5)->second(0);
-        }
-
-        if (preg_match('#\d (минут|минуты|минуту) назад#i', $date)) {
-            return Carbon::now()->subMinutes((int)$date);
-        }
-
-        if (preg_match('#\d (секунд|секунду|секунды) назад#i', $date)) {
-            return Carbon::now()->subSeconds((int)$date);
-        }
-
-        if (preg_match('#\d год#i', $date)) {
-            return Carbon::createFromDate((int)$date, 1, 1)->setTime(0, 0, 0);
-        }
-
-        foreach ([
-            'Январь' => 1, 'Февраль' => 2, 'Март' => 3, 'Апрель' => 4, 'Май' => 5, 'Июнь' => 6, 'Июль' => 7,
-                     'Август' => 8, 'Сентябрь' => 9, 'Октябрь' => 10, 'Ноябрь' => 11, 'Декабрь' => 12
-                 ] as $value => $id) {
-            if (preg_match('#' . $value . ' (\d*)#i', $date, $year)) {
-                return Carbon::createFromDate($year[1], $id, 1)->setTime(0, 0, 0);
-            }
-        }
-
-        $months = [
-            'января' => 1,
-            'янв' => 1,
-            'февраля' => 2,
-            'фев' => 2,
-            'марта' => 3,
-            'мар' => 3,
-            'апреля' => 4,
-            'апр' => 4,
-            'мая' => 5,
-            'июня' => 6,
-            'июн' => 6,
-            'июля' => 7,
-            'июл' => 7,
-            'августа' => 8,
-            'авг' => 8,
-            'сентября' => 9,
-            'сен' => 9,
-            'октября' => 10,
-            'окт' => 10,
-            'ноября' => 11,
-            'ноя' => 11,
-            'декабря' => 12,
-            'дек' => 12,
-        ];
-
-        $date = preg_replace('#сегодня в#i', Carbon::now()->format('d.m.Y'), $date);
-        $date = preg_replace('#вчера в#i', Carbon::now()->subDay()->format('d.m.Y'), $date);
-        $date = preg_replace('#Фераль#i', 'фев', $date);
-
-        $year = $this->getYear($date);
-
-        foreach ($months as $val => $id) {
-            $date = preg_replace('# ' . $val . ' #i', '.' . $id . '.' . $year, $date);
-        }
-        if (!preg_match('#\d{1,2}:\d{1,2}#i', $date)) {
-            $date .= ' 00:00';
-        }
-
-        $date = preg_replace('#в#', '', $date);
-
-        return Carbon::createFromFormat('d.m.Y H:i', $date)->second(0);
-    }
-
-    /**
-     * @param string $date
-     * @return int|string
-     */
-    private function getYear(string $date)
-    {
-        for ($year = Carbon::now()->year, $i = 0; $i < 200; $i++) {
-            if (preg_match('#' . ($year - $i) . '#i', $date)) {
-                return '';
-            }
-        }
-        for ($year = Carbon::now()->year, $i = 0; $i < 200; $i++) {
-            if (preg_match('#' . ($year + $i) . '#i', $date)) {
-                return '';
-            }
-        }
-
-        return Carbon::now()->year;
     }
 
     /**
@@ -638,6 +505,7 @@ class VKService
         foreach ($posts as $post) {
             $video = $this->getPostVideo($xpath, $post);
             $sharedPost = $this->getSharedPost($xpath, $post);
+            $hasNextComments = $this->hasNextComments($xpath, $post);
 
             yield [
                 'id' => $this->getPostId($xpath, $post),
@@ -645,7 +513,7 @@ class VKService
                 'likes' => $this->getCount($xpath, $post, 'like'),
                 'shares' => $this->getCount($xpath, $post, 'share'),
                 'views' => $this->getPostViews($xpath, $post),
-                'comments' => $this->getComments($xpath, $post),
+                'has_next_comments' => $hasNextComments,
                 'is_pinned' => $this->getPostPinned($xpath, $post),
                 'is_ad' => $this->getPostAd($xpath, $post),
                 'is_gif' => $this->isPostHasGif($xpath, $post),
@@ -655,7 +523,7 @@ class VKService
                 'shared_group_id' => (int)$sharedPost['group_id'] ?: null,
                 'shared_post_id' => (int)$sharedPost['post_id'] ?: null,
                 'links' => $this->getPostLinks($xpath, $post),
-            ];
+            ] + ($hasNextComments ? [] : ['comments' => $this->getComments($xpath, $post)]);
         }
     }
 
@@ -694,7 +562,7 @@ class VKService
             }
         }
 
-        return $this->date2carbon($date[0]->textContent);
+        return $this->date->parse($date[0]->textContent);
     }
 
     /**
@@ -746,6 +614,11 @@ class VKService
         $count = (float)preg_replace('#([^0-9.KM]+)#i', '', $count);
 
         return (int)($count * $multiplier);
+    }
+
+    public function hasNextComments(\DOMXPath &$xpath, \DOMElement &$post): bool
+    {
+        return $xpath->query('.//a[contains(@class, "replies_next_main")]', $post)->length > 0;
     }
 
     /**

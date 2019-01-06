@@ -34,7 +34,7 @@ class UpdateJobTest extends \TestCase
         /** @var VKService|MockInterface $vkServiceSpy */
         $vkServiceSpy = \Mockery::spy(VKService::class)->shouldReceive('scraper')->with($groupName)->andReturn($data)->getMock();
         /** @var ScraperService|MockInterface $scraperServiceSpy */
-        $scraperServiceSpy = \Mockery::mock(ScraperService::class)->shouldReceive('send')->with('vk', $data)->getMock();
+        $scraperServiceSpy = \Mockery::mock(ScraperService::class)->shouldReceive('sendGroup')->with('vk', $data)->getMock();
         $job = new UpdateGroupJob(Network::VKONTAKTE, $groupName);
 
         // act
@@ -45,7 +45,7 @@ class UpdateJobTest extends \TestCase
         if (is_null($data)) {
             $scraperServiceSpy->shouldNotHaveReceived('send');
         } else {
-            $scraperServiceSpy->shouldHaveReceived('send')->with('vk', $data)->once();
+            $scraperServiceSpy->shouldHaveReceived('sendGroup')->with('vk', $data)->once();
         }
     }
 }

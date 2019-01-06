@@ -308,8 +308,8 @@ class VKTest extends \TestCase
     {
         return [
             ['club103709',  true],
-            ['vsevnews',  true],
             ['beforeny',  true],
+            ['vsevnews',  false],
             ['club150276', false],
             ['tgomel', false],
             ['event136744',  false],
@@ -373,7 +373,7 @@ class VKTest extends \TestCase
     function openedAtDataProvider()
     {
         return [
-            ['club1292',  '1809-01-01 00:00:00'],
+            ['public29908', '2007-03-18 00:00:00'],
             ['public226', null],
             ['club13',    null],
             ['event368',  null],
@@ -526,22 +526,22 @@ class VKTest extends \TestCase
         return [
             [6307, '2016-01-01 00:00:00',
                 [
-                    ['id' => 2409, 'date' => '2016-02-25 00:00:00', 'likes' => 4, 'shares' => 0, 'views' => 0, 'comments' => 0, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => []],
-                    ['id' => 2408, 'date' => '2016-02-24 00:00:00', 'likes' => 0, 'shares' => 0, 'views' => 0, 'comments' => 0, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => []],
+                    ['id' => 2409, 'date' => '2016-02-25 00:00:00', 'likes' => 4, 'shares' => 0, 'views' => 0, 'has_next_comments' => false, 'comments' => 0, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null],
+                    ['id' => 2408, 'date' => '2016-02-24 00:00:00', 'likes' => 0, 'shares' => 0, 'views' => 0, 'has_next_comments' => false, 'comments' => 0, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null],
                 ]
             ],
             [376606, '2016-01-01 00:00:00',
                 [
-                    ['id' => 1110, 'date' => '2016-10-07 00:00:00', 'likes' => 0,  'shares' => 0, 'views' => 0, 'comments' => 0,  'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => ['http://run.myviasat.ru/',]],
-                    ['id' => 1108, 'date' => '2016-10-03 00:00:00', 'likes' => 10, 'shares' => 0, 'views' => 0, 'comments' => 2,  'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => []],
-                    ['id' => 1106, 'date' => '2016-10-03 00:00:00', 'likes' => 18, 'shares' => 5, 'views' => 0, 'comments' => 0,  'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => []],
-                    ['id' => 1070, 'date' => '2016-09-30 00:00:00', 'likes' => 31, 'shares' => 2, 'views' => 0, 'comments' => 25, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => []],
-                    ['id' => 1062, 'date' => '2016-09-30 00:00:00', 'likes' => 49, 'shares' => 3, 'views' => 0, 'comments' => 17, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => []],
+                    ['id' => 1110, 'date' => '2016-10-07 00:00:00', 'likes' => 0,  'shares' => 0, 'views' => 0, 'has_next_comments' => false, 'comments' => 0,  'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => ['http://run.myviasat.ru/',], 'shared_group_id' => null, 'shared_post_id' => null],
+                    ['id' => 1108, 'date' => '2016-10-03 00:00:00', 'likes' => 10, 'shares' => 0, 'views' => 0, 'has_next_comments' => false, 'comments' => 2,  'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null],
+                    ['id' => 1106, 'date' => '2016-10-03 00:00:00', 'likes' => 18, 'shares' => 5, 'views' => 0, 'has_next_comments' => false, 'comments' => 0,  'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null],
+                    ['id' => 1070, 'date' => '2016-09-30 00:00:00', 'likes' => 31, 'shares' => 2, 'views' => 0, 'has_next_comments' => true, 'comments' => 3, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null],
+                    ['id' => 1062, 'date' => '2016-09-30 00:00:00', 'likes' => 49, 'shares' => 3, 'views' => 0, 'has_next_comments' => true, 'comments' => 3, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null],
                 ]
             ],
             [407223, '2012-01-01 00:00:00',
                 [
-                    ['id' => 15, 'date' => '2012-05-07 00:00:00', 'likes' => 0, 'shares' => 0, 'views' => 0, 'comments' => 0, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => []]
+                    ['id' => 15, 'date' => '2012-05-07 00:00:00', 'likes' => 0, 'shares' => 0, 'views' => 0, 'has_next_comments' => false, 'comments' => 0, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null]
                 ]
             ],
         ];
@@ -712,7 +712,7 @@ class VKTest extends \TestCase
                             'url' => 'https://vk.com/id136722',
                     ],
                     [
-                            'avatar' => 'https://pp.userapi.com/c841529/v841529667/58e79/NseF7iEhWsc.jpg?ava=1',
+                            'avatar' => 'https://pp.userapi.com/c849528/v849528848/dc321/a1PZ_GCTc5A.jpg?ava=1',
                             'name' => 'Tanya Gubanova',
                             'url' => 'https://vk.com/tatyanagubanova',
                     ],
@@ -731,11 +731,6 @@ class VKTest extends \TestCase
                         'name' => 'Стас Кбржданский',
                         'url' => 'https://vk.com/stascomedy',
                     ],
-                    [
-                        'avatar' => 'https://pp.userapi.com/c840621/v840621644/c8fd/m-z5pcCAXHo.jpg?ava=1',
-                        'name' => 'Михаил Рылявский',
-                        'url' => 'https://vk.com/mihcomedy',
-                    ],
                 ],
             ],
             [
@@ -743,12 +738,12 @@ class VKTest extends \TestCase
                 [
                     [
                         'avatar' => 'https://pp.userapi.com/c840537/v840537688/cab6/TTOb6JL25GY.jpg?ava=1',
-                        'name' => 'Юлия Мегафон',
+                        'name' => 'Юлия &amp;#922;алашникова',
                         'url' => 'https://vk.com/megafon_cf_help',
                     ],
                     [
                         'avatar' => 'https://pp.userapi.com/c639920/v639920334/491f7/I1N5OYNcBbg.jpg?ava=1',
-                        'name' => 'Сергей Мегафон',
+                        'name' => 'Сергей &amp;#922;апустин',
                         'url' => 'https://vk.com/id175509986',
                     ],
                     [
@@ -758,7 +753,7 @@ class VKTest extends \TestCase
                     ],
                     [
                         'avatar' => 'https://pp.userapi.com/c837220/v837220247/4f281/vVni1jj06PA.jpg?ava=1',
-                        'name' => 'Мария Мегафон',
+                        'name' => 'Мария &amp;#922;иселева',
                         'url' => 'https://vk.com/megafonvolga_help',
                     ],
                     [
@@ -802,7 +797,7 @@ class VKTest extends \TestCase
                         'url' => 'https://vk.com/id39',
                     ],
                     [
-                        'avatar' => 'https://sun1-13.userapi.com/xdrhF3pojHjw8HdbKIZ5GwFczhOap6Hzqbp5SQ/qJsXjsoM0Uk.jpg?ava=1',
+                        'avatar' => 'https://pp.userapi.com/xdrhF3pojHjw8HdbKIZ5GwFczhOap6Hzqbp5SQ/qJsXjsoM0Uk.jpg?ava=1',
                         'name' => 'Ренат Садеков',
                         'url' => 'https://vk.com/rin4ik0',
                     ],
@@ -817,7 +812,7 @@ class VKTest extends \TestCase
                         'url' => 'https://vk.com/id53112',
                     ],
                     [
-                        'avatar' => 'https://pp.userapi.com/c852036/v852036596/1d917/WgPgL8XNaGQ.jpg?ava=1',
+                        'avatar' => 'https://pp.userapi.com/c846417/v846417842/3d5ed/TkQ-nUfLk7E.jpg?ava=1',
                         'name' => 'Аня Савченко',
                         'url' => 'https://vk.com/id25025',
                     ],

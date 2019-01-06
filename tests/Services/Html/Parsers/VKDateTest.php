@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Services;
+namespace App\Tests\Services\Html\Parsers;
 
-use App\Services\Html\VKService;
+use App\Services\Html\Parsers\VKDate;
 use Carbon\Carbon;
 
-class VKServiceTest extends \TestCase
+class VKDateTest extends \TestCase
 {
-    /** @var VKService */
+    /** @var VKDate */
     private $service;
 
     public function setUp()
     {
-        $this->service = app(VKService::class);
+        $this->service = app(VKDate::class);
         Carbon::setTestNow('2018-06-02 12:00:00');
     }
 
@@ -23,7 +23,7 @@ class VKServiceTest extends \TestCase
         Carbon::setTestNow();
     }
 
-    public function date2carbonDataProvider()
+    public function parseDataProvider()
     {
         return [
             ['минуту назад', '2018-06-02 11:59:00'],
@@ -90,15 +90,15 @@ class VKServiceTest extends \TestCase
     /**
      * @test
      *
-     * @dataProvider date2carbonDataProvider
+     * @dataProvider parseDataProvider
      *
      * @param string $date
      * @param string $expected
      */
-    public function date2carbon(string $date, string $expected)
+    public function parse(string $date, string $expected)
     {
         // act
-        $result = $this->service->date2carbon($date);
+        $result = $this->service->parse($date);
 
         // assert
         $this->assertEquals($expected, $result->toDateTimeString());

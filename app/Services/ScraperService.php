@@ -29,6 +29,11 @@ class ScraperService
         $this->send($this->backendHost . '/api/'  . $networkCode . '/posts/export-hash', $networkCode, $data);
     }
 
+    public function sendPostComments(string $networkCode, array $data): void
+    {
+        $this->send($this->backendHost . '/api/'  . $networkCode . '/posts/comments', $networkCode, $data);
+    }
+
     public function sendGroup(string $networkCode, array $data): void
     {
         $this->send($this->backendHost . '/api/'  . $networkCode . '/register', $networkCode, $data);

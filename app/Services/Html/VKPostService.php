@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Html;
 
 use App\Helpers\Utils;
+use App\Services\Html\Parsers\VKPost;
 use GuzzleHttp\Client;
 
 class VKPostService
@@ -13,6 +14,9 @@ class VKPostService
 
     /** @var Client */
     private $client;
+
+    /** @var VKPost */
+    private $parser;
 
     /** @var array */
     private $clientOptions = [
@@ -25,10 +29,12 @@ class VKPostService
      * VKPostService constructor.
      *
      * @param Client $client
+     * @param VKPost $parser
      */
-    public function __construct(Client $client)
+    public function __construct(Client $client, VKPost $parser)
     {
         $this->client = $client;
+        $this->parser = $parser;
 
         if (!empty(config('scraper.ips'))) {
             $this->clientOptions['curl'] = [
@@ -53,12 +59,24 @@ class VKPostService
             ],
         ])->getBody()->getContents();
 
-        if (preg_match('#\{preview:\s+\d+,\s+width:\s+%width%\},\s+\'([^\']+)\'\)",\s+data#i', $response, $hash)) {
-            return $hash[1];
-        }
-
         sleep(1);
 
-        return null;
+        return $this->parser->exportHash($response);
+    }
+
+    public function comments(int $wallId, int $postId): int
+    {
+        $response = $this->client->post(self::BASE_URL . 'al_wall.php', [
+            'form_params' => [
+                'act' => 'get_post_replies',
+                'al' => 1,
+                'count' => 20,
+                'item_id' => $postId,
+                'offset' => 1000000,
+                'owner_id' => -$wallId,
+            ],
+        ])->getBody()->getContents();
+
+        return $this->parser->comments($response);
     }
 }

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Services\CountryService;
+use App\Services\Html\Parsers\VKDate;
+use App\Services\Html\Parsers\VKPost;
 use App\Services\LoggerService;
 use App\Services\ScraperService;
 use Illuminate\Support\ServiceProvider;
@@ -30,5 +32,7 @@ class AppServiceProvider extends ServiceProvider
                 app(LoggerService::class)
             );
         });
+        $this->app->singleton(VKPost::class);
+        $this->app->singleton(VKDate::class);
     }
 }
