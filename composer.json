@@ -15,7 +15,7 @@
         "guzzlehttp/guzzle": "^6.3",
         "menarasolutions/geographer": "^0.3.5",
         "menarasolutions/geographer-ru": "^0.2.2",
-        "vladimir-yuldashev/laravel-queue-rabbitmq": "^7.0",
+        "vladimir-yuldashev/laravel-queue-rabbitmq": "^7.1.2",
         "league/flysystem": " ~1.0",
         "sentry/sentry-laravel": "^0.9.0"
     },
