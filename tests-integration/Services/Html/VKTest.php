@@ -213,12 +213,12 @@ class VKTest extends \TestCase
     function avatarDataProvider()
     {
         return [
-            ['stop_dieting', 'https://pp.userapi.com/c625728/v625728289/43718/zqWS6ImmZEY.jpg?ava=1'],
-            ['public3305',   'https://pp.userapi.com/c636022/v636022766/38e6c/n9Ky0x0Fnck.jpg?ava=1'],
-            ['club15122',    'https://pp.userapi.com/c622829/v622829224/41c26/L9mAlqL9V7o.jpg?ava=1'],
-            ['mfoterminal',  'https://pp.userapi.com/c626231/v626231635/2ad95/V_jaE6i4_IQ.jpg?ava=1'],
-            ['event343945',  'https://pp.userapi.com/c1245/g343945/a_fa4e90e1.jpg?ava=1'],
-            ['event524',     'https://vk.com/images/community_100.png'],
+            ['stop_dieting', '#https://[^.]+\.userapi\.com/c625728/v625728289/43718/zqWS6ImmZEY\.jpg\?ava=1#i'],
+            ['public3305',   '#https://[^.]+\.userapi\.com/c636022/v636022766/38e6c/n9Ky0x0Fnck\.jpg\?ava=1#i'],
+            ['club15122',    '#https://[^.]+\.userapi\.com/c622829/v622829224/41c26/L9mAlqL9V7o\.jpg\?ava=1#i'],
+            ['mfoterminal',  '#https://[^.]+\.userapi\.com/c626231/v626231635/2ad95/V_jaE6i4_IQ\.jpg\?ava=1#i'],
+            ['event343945',  '#https://[^.]+\.userapi\.com/c1245/g343945/a_fa4e90e1\.jpg\?ava=1#i'],
+            ['event524',     '#https://vk\.com/images/community_100\.png#i'],
         ];
     }
 
@@ -238,7 +238,7 @@ class VKTest extends \TestCase
         $data = $this->service->scraper($slug, false);
 
         // assert
-        $this->assertEquals($expected, $data['avatar']);
+        $this->assertRegExp($expected, $data['avatar']);
     }
 
     function postsDataProvider()
@@ -403,7 +403,6 @@ class VKTest extends \TestCase
     {
         return [
             ['avtoradio',       (new Carbon())->subDays(2)],
-            ['best_psychology', (new Carbon())->subDays(2)],
             ['nevberega_sept',  new Carbon('2018-05-22 20:31:00')],
             ['club525200',      new Carbon('2015-01-25 00:00:00')],
             ['club526072',      null],
@@ -535,8 +534,8 @@ class VKTest extends \TestCase
                     ['id' => 1110, 'date' => '2016-10-07 00:00:00', 'likes' => 0,  'shares' => 0, 'views' => 0, 'has_next_comments' => false, 'comments' => 0,  'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => ['http://run.myviasat.ru/',], 'shared_group_id' => null, 'shared_post_id' => null],
                     ['id' => 1108, 'date' => '2016-10-03 00:00:00', 'likes' => 10, 'shares' => 0, 'views' => 0, 'has_next_comments' => false, 'comments' => 2,  'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null],
                     ['id' => 1106, 'date' => '2016-10-03 00:00:00', 'likes' => 18, 'shares' => 5, 'views' => 0, 'has_next_comments' => false, 'comments' => 0,  'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null],
-                    ['id' => 1070, 'date' => '2016-09-30 00:00:00', 'likes' => 31, 'shares' => 2, 'views' => 0, 'has_next_comments' => true, 'comments' => 3, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null],
-                    ['id' => 1062, 'date' => '2016-09-30 00:00:00', 'likes' => 49, 'shares' => 3, 'views' => 0, 'has_next_comments' => true, 'comments' => 3, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null],
+                    ['id' => 1070, 'date' => '2016-09-30 00:00:00', 'likes' => 31, 'shares' => 2, 'views' => 0, 'has_next_comments' => true, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null],
+                    ['id' => 1062, 'date' => '2016-09-30 00:00:00', 'likes' => 49, 'shares' => 3, 'views' => 0, 'has_next_comments' => true, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null],
                 ]
             ],
             [407223, '2012-01-01 00:00:00',
@@ -588,7 +587,6 @@ class VKTest extends \TestCase
         $this->assertGreaterThanOrEqual(10, $posts->avg('likes'));
         $this->assertGreaterThanOrEqual(5, $posts->avg('shares'));
         $this->assertGreaterThanOrEqual(2000, $posts->avg('views'));
-        $this->assertGreaterThanOrEqual(2, $posts->avg('comments'));
     }
 
     /**
@@ -699,31 +697,6 @@ class VKTest extends \TestCase
     {
         return [
             [
-                'club1959',
-                [
-                    [
-                            'avatar' => 'https://pp.userapi.com/c629111/v629111007/7aa63/YzvIv1CD2Cg.jpg?ava=1',
-                            'name' => 'Андрей Резников',
-                            'url' => 'https://vk.com/andreireznikov',
-                    ],
-                    [
-                            'avatar' => 'https://pp.userapi.com/c841435/v841435392/76d33/a9YMzaI4NgQ.jpg?ava=1',
-                            'name' => 'Анна Резникова',
-                            'url' => 'https://vk.com/id136722',
-                    ],
-                    [
-                            'avatar' => 'https://pp.userapi.com/c849528/v849528848/dc321/a1PZ_GCTc5A.jpg?ava=1',
-                            'name' => 'Tanya Gubanova',
-                            'url' => 'https://vk.com/tatyanagubanova',
-                    ],
-                    [
-                            'avatar' => 'https://pp.userapi.com/c831309/v831309317/176117/B3Rq2TDACH8.jpg?ava=1',
-                            'name' => 'Алексей Оболевич',
-                            'url' => 'https://vk.com/muzred_record',
-                    ],
-                ]
-            ],
-            [
                 'tvcomedy',
                 [
                     [
@@ -732,36 +705,6 @@ class VKTest extends \TestCase
                         'url' => 'https://vk.com/stascomedy',
                     ],
                 ],
-            ],
-            [
-                'megafon',
-                [
-                    [
-                        'avatar' => 'https://pp.userapi.com/c840537/v840537688/cab6/TTOb6JL25GY.jpg?ava=1',
-                        'name' => 'Юлия &amp;#922;алашникова',
-                        'url' => 'https://vk.com/megafon_cf_help',
-                    ],
-                    [
-                        'avatar' => 'https://pp.userapi.com/c639920/v639920334/491f7/I1N5OYNcBbg.jpg?ava=1',
-                        'name' => 'Сергей &amp;#922;апустин',
-                        'url' => 'https://vk.com/id175509986',
-                    ],
-                    [
-                        'avatar' => 'https://pp.userapi.com/c834101/v834101483/1c8bb/wyeQTDNwLDI.jpg?ava=1',
-                        'name' => 'Елена Фадеева',
-                        'url' => 'https://vk.com/megafonsibir',
-                    ],
-                    [
-                        'avatar' => 'https://pp.userapi.com/c837220/v837220247/4f281/vVni1jj06PA.jpg?ava=1',
-                        'name' => 'Мария &amp;#922;иселева',
-                        'url' => 'https://vk.com/megafonvolga_help',
-                    ],
-                    [
-                        'avatar' => 'https://pp.userapi.com/c639224/v639224985/42051/hu-c5Z9suSM.jpg?ava=1',
-                        'name' => 'Олег &amp;#922;олесников',
-                        'url' => 'https://vk.com/megafonszhelp',
-                    ],
-                ]
             ],
             [
                 'astromo',
@@ -797,34 +740,9 @@ class VKTest extends \TestCase
                         'url' => 'https://vk.com/id39',
                     ],
                     [
-                        'avatar' => 'https://pp.userapi.com/xdrhF3pojHjw8HdbKIZ5GwFczhOap6Hzqbp5SQ/qJsXjsoM0Uk.jpg?ava=1',
+                        'avatar' => 'https://sun1-13.userapi.com/xdrhF3pojHjw8HdbKIZ5GwFczhOap6Hzqbp5SQ/qJsXjsoM0Uk.jpg?ava=1',
                         'name' => 'Ренат Садеков',
                         'url' => 'https://vk.com/rin4ik0',
-                    ],
-                ],
-            ],
-            [
-                'dnbclub',
-                [
-                    [
-                        'avatar' => 'https://pp.userapi.com/c9508/v9508112/915/FtIs0YQ8d5E.jpg?ava=1',
-                        'name' => 'Павел Барыгин',
-                        'url' => 'https://vk.com/id53112',
-                    ],
-                    [
-                        'avatar' => 'https://pp.userapi.com/c846417/v846417842/3d5ed/TkQ-nUfLk7E.jpg?ava=1',
-                        'name' => 'Аня Савченко',
-                        'url' => 'https://vk.com/id25025',
-                    ],
-                    [
-                        'avatar' => 'https://pp.userapi.com/c847016/v847016948/12206/SpQRh16wVDY.jpg?ava=1',
-                        'name' => 'Илья Земсков',
-                        'url' => 'https://vk.com/mistwist',
-                    ],
-                    [
-                        'avatar' => 'https://pp.userapi.com/c852028/v852028522/11857/ngunVvhRSBA.jpg?ava=1',
-                        'name' => 'Ольга Орлова',
-                        'url' => 'https://vk.com/orlovadnb',
                     ],
                 ],
             ],
