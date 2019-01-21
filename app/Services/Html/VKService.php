@@ -465,11 +465,15 @@ class VKService
      */
     private function loadWall(int $groupId, int $offset = 0): string
     {
-        $response = (string)$this->client->request('GET', self::BASE_URL . 'wall-' . $groupId . '?offset=' . $offset, $this->clientOptions + [
-            'query' => [
+        $response = (string)$this->client->request('GET', self::BASE_URL . 'wall-' . $groupId . '?offset=' . $offset,
+            [
+              'headers' => $this->clientOptions['headers'] + [
+                  'cookie' => 'remixsid=' . Utils::randomArrayValue(config('scraper.vk_keys')),
+              ],
+              'query' => [
                 'own' => 1,
                 'offset' => $offset
-            ]
+              ]
         ])->getBody();
 
         if ($this->isRateLimit($response)) {
@@ -514,6 +518,7 @@ class VKService
                 'shares' => $this->getCount($xpath, $post, 'share'),
                 'views' => $this->getPostViews($xpath, $post),
                 'has_next_comments' => $hasNextComments,
+                'comments' => $this->getCount($xpath, $post, 'comment'),
                 'is_pinned' => $this->getPostPinned($xpath, $post),
                 'is_ad' => $this->getPostAd($xpath, $post),
                 'is_gif' => $this->isPostHasGif($xpath, $post),
@@ -523,7 +528,7 @@ class VKService
                 'shared_group_id' => (int)$sharedPost['group_id'] ?: null,
                 'shared_post_id' => (int)$sharedPost['post_id'] ?: null,
                 'links' => $this->getPostLinks($xpath, $post),
-            ] + ($hasNextComments ? [] : ['comments' => $this->getComments($xpath, $post)]);
+            ];
         }
     }
 

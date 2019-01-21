@@ -19,11 +19,11 @@ class TestCommand extends Command
     {
 //        echo $postService->exportHash(5277, 717319);
         Carbon::setTestNow('2016-01-01 00:00:00');
-//        $wall = $service->runWall(['source_id' => 376606]);
+        $wall = $service->runWall(['source_id' => 337]);
 
-//        print_r($wall);
+        print_r($wall[1]);
 
-        print_r($postService->comments(376606, 1070));
+//        print_r($postService->comments(337, 358705));
 //        var_export(collect($data['wall'])->filter(function ($post) { return $post['id'] === 40563; }));
 //
 //        $scraperService->sendGroup(Network::getVkontakteCode(), $data);
