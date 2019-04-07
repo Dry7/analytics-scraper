@@ -23,4 +23,14 @@ abstract class TestCase extends Laravel\Lumen\Testing\TestCase
     {
         sleep($seconds);
     }
+
+    protected function assertVKPostImages(string $expected, string $actual)
+    {
+        $this->assertEquals($this->clearVKImage($expected), $this->clearVKImage($actual));
+    }
+
+    private function clearVKImage(string $image): string
+    {
+        return preg_replace('#https://[^.]+\.userapi\.com#i', '', $image);
+    }
 }

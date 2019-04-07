@@ -403,7 +403,7 @@ class VKTest extends \TestCase
     {
         return [
             ['avtoradio',       (new Carbon())->subDays(2)],
-            ['nevberega_sept',  new Carbon('2018-05-22 20:31:00')],
+            ['club653',         new Carbon('2013-04-21 00:00:00')],
             ['club525200',      new Carbon('2015-01-25 00:00:00')],
             ['club526072',      null],
             ['club525975',      null],
@@ -532,10 +532,10 @@ class VKTest extends \TestCase
             [376606, '2016-01-01 00:00:00',
                 [
                     ['id' => 1110, 'date' => '2016-10-07 00:00:00', 'likes' => 0,  'shares' => 0, 'views' => 0, 'has_next_comments' => false, 'comments' => 0,  'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => ['http://run.myviasat.ru/',], 'shared_group_id' => null, 'shared_post_id' => null],
-                    ['id' => 1108, 'date' => '2016-10-03 00:00:00', 'likes' => 10, 'shares' => 0, 'views' => 0, 'has_next_comments' => false, 'comments' => 2,  'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null],
+                    ['id' => 1108, 'date' => '2016-10-03 00:00:00', 'likes' => 11, 'shares' => 0, 'views' => 0, 'has_next_comments' => false, 'comments' => 3,  'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null],
                     ['id' => 1106, 'date' => '2016-10-03 00:00:00', 'likes' => 18, 'shares' => 5, 'views' => 0, 'has_next_comments' => false, 'comments' => 0,  'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null],
-                    ['id' => 1070, 'date' => '2016-09-30 00:00:00', 'likes' => 31, 'shares' => 2, 'views' => 0, 'has_next_comments' => true, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null],
-                    ['id' => 1062, 'date' => '2016-09-30 00:00:00', 'likes' => 49, 'shares' => 3, 'views' => 0, 'has_next_comments' => true, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null],
+                    ['id' => 1070, 'date' => '2016-09-30 00:00:00', 'likes' => 31, 'shares' => 2, 'views' => 0, 'has_next_comments' => true, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null, 'comments' => 25],
+                    ['id' => 1062, 'date' => '2016-09-30 00:00:00', 'likes' => 49, 'shares' => 3, 'views' => 0, 'has_next_comments' => true, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null, 'comments' => 17],
                 ]
             ],
             [407223, '2012-01-01 00:00:00',
@@ -690,19 +690,28 @@ class VKTest extends \TestCase
         $data = $this->service->scraper($slug, false);
 
         // assert
-        $this->assertSame($expected, $data['contacts']);
+        foreach ($expected as $key => $value) {
+            $this->assertVKPostImages($value['avatar'], $data['contacts'][$key]['avatar']);
+            $this->assertEquals($value['name'], $data['contacts'][$key]['name']);
+            $this->assertEquals($value['url'], $data['contacts'][$key]['url']);
+        }
     }
 
     public function contactsDataProvider()
     {
         return [
             [
-                'tvcomedy',
+                'world_swag',
                 [
                     [
-                        'avatar' => 'https://pp.userapi.com/c840235/v840235623/7e7c8/68GUOjopCdM.jpg?ava=1',
-                        'name' => 'Стас Кбржданский',
-                        'url' => 'https://vk.com/stascomedy',
+                        'avatar' => 'https://vk.com/images/deactivated_50.png?ava=1',
+                        'name' => 'Віка Назімова',
+                        'url' => 'https://vk.com/nazimova_v',
+                    ],
+                    [
+                        'avatar' => 'https://pp.userapi.com/c638726/v638726175/16ae0/3sWrEFkt4WE.jpg?ava=1',
+                        'name' => 'Борис Ли',
+                        'url' => 'https://vk.com/id196273175',
                     ],
                 ],
             ],
@@ -725,12 +734,12 @@ class VKTest extends \TestCase
                         'url' => 'https://vk.com/id49186',
                     ],
                     [
-                        'avatar' => 'https://pp.userapi.com/c301707/v301707365/4ee3/u2EFpalnY9U.jpg?ava=1',
+                        'avatar' => 'https://sun1-28.userapi.com/c301707/v301707365/4ee3/u2EFpalnY9U.jpg?ava=1',
                         'name' => 'Станислав Вахитов',
                         'url' => 'https://vk.com/svahitov',
                     ],
                     [
-                        'avatar' => 'https://pp.userapi.com/c637130/v637130219/8121/QShqWj4bw7c.jpg?ava=1',
+                        'avatar' => 'https://sun1-14.userapi.com/c637130/v637130219/8121/QShqWj4bw7c.jpg?ava=1',
                         'name' => 'Майкл Сенин',
                         'url' => 'https://vk.com/mikesenin',
                     ],
@@ -740,7 +749,7 @@ class VKTest extends \TestCase
                         'url' => 'https://vk.com/id39',
                     ],
                     [
-                        'avatar' => 'https://sun1-13.userapi.com/xdrhF3pojHjw8HdbKIZ5GwFczhOap6Hzqbp5SQ/qJsXjsoM0Uk.jpg?ava=1',
+                        'avatar' => 'https://pp.userapi.com/xdrhF3pojHjw8HdbKIZ5GwFczhOap6Hzqbp5SQ/qJsXjsoM0Uk.jpg?ava=1',
                         'name' => 'Ренат Садеков',
                         'url' => 'https://vk.com/rin4ik0',
                     ],
@@ -755,7 +764,7 @@ class VKTest extends \TestCase
                         'url' => 'https://vk.com/smm_consulting',
                     ],
                     [
-                        'avatar' => 'https://pp.userapi.com/c630427/v630427305/2cb65/ryogPWokO0o.jpg?ava=1',
+                        'avatar' => 'https://sun1-15.userapi.com/c630427/v630427305/2cb65/ryogPWokO0o.jpg?ava=1',
                         'name' => 'Vladimir Belikov',
                         'url' => 'https://vk.com/id80725305',
                     ],

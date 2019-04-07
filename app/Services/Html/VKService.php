@@ -465,9 +465,10 @@ class VKService
      */
     private function loadWall(int $groupId, int $offset = 0): string
     {
-        $response = (string)$this->client->request('GET', self::BASE_URL . 'wall-' . $groupId . '?offset=' . $offset,
+        $response = (string)$this->client->request('GET', self::BASE_URL . 'wall-' . $groupId,
             [
-              'headers' => $this->clientOptions['headers'] + [
+              'headers' => $this->clientOptions['headers'] +
+                  [
                   'cookie' => 'remixsid=' . Utils::randomArrayValue(config('scraper.vk_keys')),
               ],
               'query' => [
