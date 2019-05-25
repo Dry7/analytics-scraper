@@ -690,6 +690,7 @@ class VKTest extends \TestCase
         $data = $this->service->scraper($slug, false);
 
         // assert
+        $this->assertEquals(sizeof($expected), sizeof($data['contacts']));
         foreach ($expected as $key => $value) {
             $this->assertVKPostImages($value['avatar'], $data['contacts'][$key]['avatar']);
             $this->assertEquals($value['name'], $data['contacts'][$key]['name']);
@@ -717,13 +718,7 @@ class VKTest extends \TestCase
             ],
             [
                 'astromo',
-                [
-                    [
-                        'avatar' => 'https://pp.userapi.com/c9848/u9443299/e_51b153b2.jpg?ava=1',
-                        'name' => 'Karina Sviridova',
-                        'url' => 'https://vk.com/karinasviridova',
-                    ],
-                ],
+                [],
             ],
             [
                 'club24',

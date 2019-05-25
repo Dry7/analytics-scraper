@@ -272,7 +272,7 @@ class VKService
          || preg_match('#<div class="group_info_row time" title="[^"]+">([^<]*)</div>#', $html, $event_start)
          || preg_match('#<div class="group_info_row time" title="[^"]+">\s*<div class="line_value">([^<]*)</div>\s*</div>#', $html, $event_start)
          || preg_match('#<div class="group_info_row soon" title="[^"]+">([^<]*)</div>#', $html, $event_start)) {
-            $event_start = preg_replace('#Событие состоялось#i', '', $this->decode($event_start[1]));
+            $event_start = preg_replace('#(Событие состоялось|Мероприятие состоялось)#i', '', $this->decode($event_start[1]));
             if (strpos($event_start, '&mdash;') !== false) {
                 $events = explode('&mdash;', $event_start);
                 $result['event_start'] = $this->date->parse(trim($events[0]))->toDateTimeString();
