@@ -439,7 +439,7 @@ class VKTest extends \TestCase
             ['team', ['RU', 'RU-SPE', 498817]],
             ['gaz',  ['RU', 'RU-MOW', 524901]],
             ['ababahalamaha.publishers',  ['UA', 'UA-30', 703448]],
-            ['bgkmeshkova',  ['BY', 'BY-BR', '629634']],
+            ['meshkovbrest',  ['BY', 'BY-BR', '629634']],
             ['club525865',  [null, null, null]],
         ];
     }
@@ -729,24 +729,19 @@ class VKTest extends \TestCase
                         'url' => 'https://vk.com/id49186',
                     ],
                     [
+                        'avatar' => 'https://pp.userapi.com/xdrhF3pojHjw8HdbKIZ5GwFczhOap6Hzqbp5SQ/qJsXjsoM0Uk.jpg?ava=1',
+                        'name' => 'Ренат Садеков',
+                        'url' => 'https://vk.com/rin4ik0',
+                    ],
+                    [
                         'avatar' => 'https://sun1-28.userapi.com/c301707/v301707365/4ee3/u2EFpalnY9U.jpg?ava=1',
                         'name' => 'Станислав Вахитов',
                         'url' => 'https://vk.com/svahitov',
                     ],
                     [
-                        'avatar' => 'https://sun1-14.userapi.com/c637130/v637130219/8121/QShqWj4bw7c.jpg?ava=1',
-                        'name' => 'Майкл Сенин',
-                        'url' => 'https://vk.com/mikesenin',
-                    ],
-                    [
                         'avatar' => 'https://pp.userapi.com/c536/u00039/e_c1035f8a.jpg?ava=1',
                         'name' => 'David Mirelli',
                         'url' => 'https://vk.com/id39',
-                    ],
-                    [
-                        'avatar' => 'https://pp.userapi.com/xdrhF3pojHjw8HdbKIZ5GwFczhOap6Hzqbp5SQ/qJsXjsoM0Uk.jpg?ava=1',
-                        'name' => 'Ренат Садеков',
-                        'url' => 'https://vk.com/rin4ik0',
                     ],
                 ],
             ],
