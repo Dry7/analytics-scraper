@@ -236,7 +236,12 @@ class VKService
             $result['members'] = (int)preg_replace('/[^0-9]*/i', '', $members[1]);
         }
 
-        $result['is_verified'] = (bool)preg_match('#<h2\s*class="page_name">[^<]+<a\s*href="\/verify"\s*class="page_verified#i', $html);
+        if (empty($result['members'])
+            && preg_match('#<span\s+class="group_friends_count">(\d+)</span>#i', $html, $members)) {
+            $result['members'] = (int)preg_replace('/[^0-9]*/i', '', $members[1]);
+        }
+
+        $result['is_verified'] = (bool)preg_match('#<h1\s+class="page_name">[^<]+<a\s+href="/verify"\s*class="page_verified\s*"\s*onmouseover="pageVerifiedTip#i', $html);
         $result['is_closed'] = (bool)!preg_match('#wall_module#i', $html);
         $result['is_adult'] = (bool)preg_match('#"age_disclaimer":true#i', $html);
         $result['is_private'] = (bool)preg_match('#Это частное сообщество. Доступ только по приглашениям администраторов.#i', $html);
@@ -317,16 +322,17 @@ class VKService
         }
 
         if (!((int)$result['posts'] > 0)) {
-            if (preg_match('#<input type="hidden" id="page_wall_count_own" value="(.*)" />#i', $html, $posts)) {
+            if (preg_match('#<input type="hidden"\s*id="page_wall_count_own"\s*value="(.*)"\s*/>#i', $html, $posts)) {
                 $result['posts'] = (int)$posts[1];
             } else {
                 $result['posts'] = null;
             }
         }
 
-        if (preg_match('#<a href="\/wall\?act=toggle_subscribe\&owner_id=\-(\d*)&#i', $html, $source_id)) {
-            $result['source_id'] = (int)$source_id[1];
-        } elseif(preg_match('#page\.showPageMembers\(event, -(\d+), \'members\'\)"#i', $html, $source_id)) {
+        if (preg_match('#<a href="\/wall\?act=toggle_subscribe\&owner_id=\-(\d*)&#i', $html, $source_id)
+            || preg_match('#page\.showPageMembers\(event, -(\d+), \'members\'\)"#i', $html, $source_id)
+            || preg_match('#SimilarGroups\.init\(-(\d+),#i', $html, $source_id)
+        ) {
             $result['source_id'] = (int)$source_id[1];
         }
 
@@ -524,10 +530,10 @@ class VKService
                 'is_ad' => $this->getPostAd($xpath, $post),
                 'is_gif' => $this->isPostHasGif($xpath, $post),
                 'is_video' => !is_null($video),
-                'video_group_id' => (int)$video['group_id'] ?: null,
-                'video_id' => (int)$video['video_id'] ?: null,
-                'shared_group_id' => (int)$sharedPost['group_id'] ?: null,
-                'shared_post_id' => (int)$sharedPost['post_id'] ?: null,
+                'video_group_id' => isset($video['group_id']) ? (int)$video['group_id'] : null,
+                'video_id' => isset($video['video_id']) ? (int)$video['video_id'] : null,
+                'shared_group_id' => isset($sharedPost['group_id']) ? (int)$sharedPost['group_id'] : null,
+                'shared_post_id' => isset($sharedPost['post_id']) ? (int)$sharedPost['post_id'] : null,
                 'links' => $this->getPostLinks($xpath, $post),
             ];
         }

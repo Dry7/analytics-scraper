@@ -123,7 +123,6 @@ class VKTest extends \TestCase
             ['bestdemotivators', 'Демотиваторы'],
             ['vestifuture',      'Новости из будущего'],
             ['best_girl_ukr',    '&#9829;&#9829;&#9829;За девушек из Украины&#9829;&#9829;&#9829;'],
-            ['art_erotika',      'АРТ ЭРОТИКА'],
             ['originalsclub',    '&#593;did&#593;s / / / Originals'],
             ['club155209',       'БРЮНЕТКИ ПРАВЯТ МИРОМ&#33;&#33;&#33;'],
             ['mfoterminal',      'МКК &quot;Терминал Финанс&quot;'],
@@ -245,10 +244,10 @@ class VKTest extends \TestCase
     {
         return [
             ['club102189',       null],
-            ['infinityconcert',  9000],
-            ['nba_club1222',     70000],
-            ['in_russia',        56000],
-            ['concertsinmoscow', 290],
+            ['infinityconcert',  11500],
+            ['nba_club1222',     89150],
+            ['in_russia',        64950],
+            ['concertsinmoscow', 310],
         ];
     }
 
@@ -309,7 +308,7 @@ class VKTest extends \TestCase
         return [
             ['club103709',  true],
             ['beforeny',  true],
-            ['vsevnews',  false],
+            ['sevnews24',  false],
             ['club150276', false],
             ['tgomel', false],
             ['event136744',  false],
@@ -532,7 +531,7 @@ class VKTest extends \TestCase
             [376606, '2016-01-01 00:00:00',
                 [
                     ['id' => 1110, 'date' => '2016-10-07 00:00:00', 'likes' => 0,  'shares' => 0, 'views' => 0, 'has_next_comments' => false, 'comments' => 0,  'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => ['http://run.myviasat.ru/',], 'shared_group_id' => null, 'shared_post_id' => null],
-                    ['id' => 1108, 'date' => '2016-10-03 00:00:00', 'likes' => 11, 'shares' => 0, 'views' => 0, 'has_next_comments' => false, 'comments' => 3,  'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null],
+                    ['id' => 1108, 'date' => '2016-10-03 00:00:00', 'likes' => 11, 'shares' => 0, 'views' => 0, 'has_next_comments' => false, 'comments' => 4,  'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null],
                     ['id' => 1106, 'date' => '2016-10-03 00:00:00', 'likes' => 18, 'shares' => 5, 'views' => 0, 'has_next_comments' => false, 'comments' => 0,  'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null],
                     ['id' => 1070, 'date' => '2016-09-30 00:00:00', 'likes' => 31, 'shares' => 2, 'views' => 0, 'has_next_comments' => true, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null, 'comments' => 25],
                     ['id' => 1062, 'date' => '2016-09-30 00:00:00', 'likes' => 49, 'shares' => 3, 'views' => 0, 'has_next_comments' => true, 'is_pinned' => false, 'is_ad' => false, 'is_gif' => false, 'is_video' => false, 'video_group_id' => null, 'video_id' => null, 'links' => [], 'shared_group_id' => null, 'shared_post_id' => null, 'comments' => 17],
@@ -705,7 +704,7 @@ class VKTest extends \TestCase
                 'world_swag',
                 [
                     [
-                        'avatar' => 'https://vk.com/images/deactivated_50.png?ava=1',
+                        'avatar' => 'https://vk.com/images/camera_50.png?ava=1',
                         'name' => 'Віка Назімова',
                         'url' => 'https://vk.com/nazimova_v',
                     ],
@@ -749,7 +748,7 @@ class VKTest extends \TestCase
                 'public12648877',
                 [
                     [
-                        'avatar' => 'https://pp.userapi.com/c316123/u29647021/e_28a2cd17.jpg?ava=1',
+                        'avatar' => 'https://sun1-97.userapi.com/x6F10ZY3V3URHr1bT8fOPt9G4cOAiMSK06SZ6g/J4XloiqNjbQ.jpg?ava=1',
                         'name' => 'Владимир Щербаков',
                         'url' => 'https://vk.com/smm_consulting',
                     ],

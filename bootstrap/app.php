@@ -96,7 +96,6 @@ $app->configure('sentry');
 */
 
 $app->register(App\Providers\AppServiceProvider::class);
-$app->register(Sentry\SentryLaravel\SentryLumenServiceProvider::class);
 $app->register(\VladimirYuldashev\LaravelQueueRabbitMQ\LaravelQueueRabbitMQServiceProvider::class);
 
 if ($app->environment() !== 'production') {
