@@ -125,7 +125,7 @@ class VKTest extends \TestCase
             ['best_girl_ukr',    '&#9829;&#9829;&#9829;За девушек из Украины&#9829;&#9829;&#9829;'],
             ['originalsclub',    '&#593;did&#593;s / / / Originals'],
             ['club155209',       'БРЮНЕТКИ ПРАВЯТ МИРОМ&#33;&#33;&#33;'],
-            ['mfoterminal',      'МКК &quot;Терминал Финанс&quot;'],
+            ['krisstixo',        'Kristi XO'],
         ];
     }
 
@@ -212,10 +212,9 @@ class VKTest extends \TestCase
     function avatarDataProvider()
     {
         return [
-            ['stop_dieting', '#https://[^.]+\.userapi\.com/c625728/v625728289/43718/zqWS6ImmZEY\.jpg\?ava=1#i'],
-            ['public3305',   '#https://[^.]+\.userapi\.com/c636022/v636022766/38e6c/n9Ky0x0Fnck\.jpg\?ava=1#i'],
-            ['club15122',    '#https://[^.]+\.userapi\.com/c622829/v622829224/41c26/L9mAlqL9V7o\.jpg\?ava=1#i'],
-            ['mfoterminal',  '#https://[^.]+\.userapi\.com/c626231/v626231635/2ad95/V_jaE6i4_IQ\.jpg\?ava=1#i'],
+            ['stop_dieting', '#https://[^.]+\.userapi\.com/impf/c625728/v625728289/43712/0BUF5QGLGzE\.jpg#i'],
+            ['public3305',   '#https://[^.]+\.userapi\.com/impf/c621627/v621627766/32761/X1p-nIQ1y7g\.jpg#i'],
+            ['club15122',    '#https://[^.]+\.userapi\.com/impf/c622829/v622829224/41c20/U84K84Mr520\.jpg#i'],
             ['event343945',  '#https://[^.]+\.userapi\.com/c1245/g343945/a_fa4e90e1\.jpg\?ava=1#i'],
             ['event524',     '#https://vk\.com/images/community_100\.png#i'],
         ];
@@ -405,7 +404,7 @@ class VKTest extends \TestCase
             ['club653',         new Carbon('2013-04-21 00:00:00')],
             ['club525200',      new Carbon('2015-01-25 00:00:00')],
             ['club526072',      null],
-            ['club525975',      null],
+            ['club525975',      new Carbon('2012-07-09 00:00:00')],
         ];
     }
 
@@ -426,9 +425,9 @@ class VKTest extends \TestCase
 
         // assert
         if (is_null($expected)) {
-            $this->assertNull($data['last_post_at']);
+            self::assertNull($data['last_post_at']);
         } else {
-            $this->assertGreaterThan($expected, $data['last_post_at']);
+            self::assertGreaterThanOrEqual($expected, $data['last_post_at']);
         }
     }
 
@@ -609,7 +608,7 @@ class VKTest extends \TestCase
     public static function postVideoDataProvider()
     {
         return [
-            [9562, '2016-04-18 00:00:00', 24321187, 456239093],
+            [138822418, '2016-04-18 00:00:00', 138822418, 456239126],
             [7868, '2016-05-16 00:00:00', 16366828, 456239044],
         ];
     }
@@ -689,27 +688,27 @@ class VKTest extends \TestCase
         $data = $this->service->scraper($slug, false);
 
         // assert
-        $this->assertEquals(sizeof($expected), sizeof($data['contacts']));
+        self::assertSameSize($expected, $data['contacts']);
         foreach ($expected as $key => $value) {
             $this->assertVKPostImages($value['avatar'], $data['contacts'][$key]['avatar']);
-            $this->assertEquals($value['name'], $data['contacts'][$key]['name']);
-            $this->assertEquals($value['url'], $data['contacts'][$key]['url']);
+            self::assertEquals($value['name'], $data['contacts'][$key]['name']);
+            self::assertEquals($value['url'], $data['contacts'][$key]['url']);
         }
     }
 
-    public function contactsDataProvider()
+    public function contactsDataProvider(): array
     {
         return [
             [
                 'world_swag',
                 [
                     [
-                        'avatar' => 'https://vk.com/images/camera_50.png?ava=1',
+                        'avatar' => 'https://sun9-7.userapi.com/impg/Jz-Il0cXdbdL0Y84QYHhp5ea8EeA5hVoEVZxHA/Stz_VjLwV44.jpg?size=50x0&quality=88&crop=0,407,1727,1727&sign=771e84de6915c8f965451807e7036431&ava=1',
                         'name' => 'Віка Назімова',
                         'url' => 'https://vk.com/nazimova_v',
                     ],
                     [
-                        'avatar' => 'https://pp.userapi.com/c638726/v638726175/16ae0/3sWrEFkt4WE.jpg?ava=1',
+                        'avatar' => 'https://sun9-73.userapi.com/impf/c638726/v638726175/16ad7/Yq0EDEPz2x0.jpg?size=50x0&quality=88&crop=0,37,1037,1037&sign=09cd15f60551db3db080540f710fb1ca&ava=1',
                         'name' => 'Борис Ли',
                         'url' => 'https://vk.com/id196273175',
                     ],
@@ -723,22 +722,22 @@ class VKTest extends \TestCase
                 'club24',
                 [
                     [
-                        'avatar' => 'https://pp.userapi.com/c71/u49186/e_e231de63.jpg?ava=1',
+                        'avatar' => 'https://sun9-73.userapi.com/c71/u49186/e_e231de63.jpg?ava=1',
                         'name' => 'Олег Княгинин',
                         'url' => 'https://vk.com/id49186',
                     ],
                     [
-                        'avatar' => 'https://pp.userapi.com/xdrhF3pojHjw8HdbKIZ5GwFczhOap6Hzqbp5SQ/qJsXjsoM0Uk.jpg?ava=1',
+                        'avatar' => 'https://sun9-10.userapi.com/impf/obA54AdQE_HrYbKe2zhQyqKbnmkk7q-MsEvUfQ/_NdIPGF3RUQ.jpg?size=50x0&quality=88&crop=0,61,1536,1536&sign=5a06c043a582061be777331d14a28357&ava=1',
                         'name' => 'Ренат Садеков',
                         'url' => 'https://vk.com/rin4ik0',
                     ],
                     [
-                        'avatar' => 'https://sun1-28.userapi.com/c301707/v301707365/4ee3/u2EFpalnY9U.jpg?ava=1',
+                        'avatar' => 'https://sun9-43.userapi.com/impf/c301707/v301707365/49bf/Wz8ELixfKCw.jpg?size=50x0&quality=88&crop=0,111,768,768&sign=8a4550413c7b4eab728ec60015a99584&ava=1',
                         'name' => 'Станислав Вахитов',
                         'url' => 'https://vk.com/svahitov',
                     ],
                     [
-                        'avatar' => 'https://pp.userapi.com/c536/u00039/e_c1035f8a.jpg?ava=1',
+                        'avatar' => 'https://sun9-56.userapi.com/c536/u00039/e_c1035f8a.jpg?ava=1',
                         'name' => 'David Mirelli',
                         'url' => 'https://vk.com/id39',
                     ],
@@ -748,12 +747,12 @@ class VKTest extends \TestCase
                 'public12648877',
                 [
                     [
-                        'avatar' => 'https://sun1-97.userapi.com/x6F10ZY3V3URHr1bT8fOPt9G4cOAiMSK06SZ6g/J4XloiqNjbQ.jpg?ava=1',
+                        'avatar' => 'https://sun9-56.userapi.com/x6F10ZY3V3URHr1bT8fOPt9G4cOAiMSK06SZ6g/J4XloiqNjbQ.jpg?ava=1',
                         'name' => 'Владимир Щербаков',
                         'url' => 'https://vk.com/smm_consulting',
                     ],
                     [
-                        'avatar' => 'https://sun1-15.userapi.com/c630427/v630427305/2cb65/ryogPWokO0o.jpg?ava=1',
+                        'avatar' => 'https://sun9-72.userapi.com/impf/c630427/v630427305/2cb5d/t3-oXucxPI4.jpg?size=50x0&quality=88&crop=0,13,200,200&sign=ddff911d8db37d6da6322fc4d45afc4a&ava=1',
                         'name' => 'Vladimir Belikov',
                         'url' => 'https://vk.com/id80725305',
                     ],

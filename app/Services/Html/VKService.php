@@ -242,30 +242,30 @@ class VKService
         }
 
         $result['is_verified'] = (bool)preg_match('#<h1\s+class="page_name">[^<]+<a\s+href="/verify"\s*class="page_verified\s*"\s*onmouseover="pageVerifiedTip#i', $html);
-        $result['is_closed'] = (bool)!preg_match('#wall_module#i', $html);
+        $result['is_closed'] = false === stripos($html, 'wall_module');
         $result['is_adult'] = (bool)preg_match('#"age_disclaimer":true#i', $html);
-        $result['is_private'] = (bool)preg_match('#Это частное сообщество. Доступ только по приглашениям администраторов.#i', $html);
-        $result['is_banned'] = (bool)(preg_match('#Сообщество заблокировано в связи с возможным нарушением правил сайта.#i', $html)
-        || preg_match('#Данный материал заблокирован на территории Российской Федерации#i', $html));
+        $result['is_private'] = (bool)preg_match('#Это частное сообщество. Доступ только по приглашениям администраторов.#iu', $html);
+        $result['is_banned'] = (bool)(preg_match('#Сообщество заблокировано в связи с возможным нарушением правил сайта.#iu', $html)
+        || preg_match('#Данный материал заблокирован на территории Российской Федерации#iu', $html));
 
-        if (preg_match('#mhi_back">Мероприятие</span>#i', $html)
+        if (preg_match('#mhi_back">Мероприятие</span>#iu', $html)
             || preg_match('#id="event_admin"#i', $html)) {
             $result['type_id'] = Type::EVENT;
-        } elseif (preg_match('#mhi_back">Страница</span>#i', $html)
+        } elseif (preg_match('#mhi_back">Страница</span>#iu', $html)
             || preg_match('#public_followers#i', $html)
-            || preg_match('#<aside aria-label="Подписчики">#i', $html)) {
+            || preg_match('#<aside aria-label="Подписчики">#iu', $html)) {
             $result['type_id'] = Type::PUBLIC;
         } else {
             $result['type_id'] = Type::GROUP;
         }
 
-        if (preg_match('#<dt>Дата основания:</dt><dd>(.*)</dd>#i', $html, $opened_at)
+        if (preg_match('#<dt>Дата основания:</dt><dd>(.*)</dd>#iu', $html, $opened_at)
          || preg_match('#<div class="group_info_row date" title="[^"]+">([^<]*)</div>#i', $html, $opened_at)
          || preg_match('#<div class="group_info_row date" title="[^"]*">\s*<div class="line_value">([^<]*)</div>\s*</div>#i', $html, $opened_at)) {
             $result['opened_at'] = $this->date->parse($this->decode($opened_at[1]))->toDateTimeString();
         }
 
-        if (preg_match('#<dl class="pinfo_row"><dt>Место:</dt><dd><a(?: [^>]*)>([^<]*)</a>#i', $html, $city)
+        if (preg_match('#<dl class="pinfo_row"><dt>Место:</dt><dd><a(?: [^>]*)>([^<]*)</a>#iu', $html, $city)
          || preg_match('#<div class="group_info_row address" title="[^"]+"><a href="[^"]+">([^<]*)</a></div>#', $html, $city)
          || preg_match('#class="address_link">([^<]*)</a>#', $html, $city)) {
             foreach ($this->countryService->findCity($this->decode(strip_tags($city[1]))) as $key => $value) {
@@ -273,11 +273,11 @@ class VKService
             }
         }
 
-        if (preg_match('#<dt>Начало:</dt><dd>([^>]*)</dd>#i', $html, $event_start)
+        if (preg_match('#<dt>Начало:</dt><dd>([^>]*)</dd>#iu', $html, $event_start)
          || preg_match('#<div class="group_info_row time" title="[^"]+">([^<]*)</div>#', $html, $event_start)
          || preg_match('#<div class="group_info_row time" title="[^"]+">\s*<div class="line_value">([^<]*)</div>\s*</div>#', $html, $event_start)
          || preg_match('#<div class="group_info_row soon" title="[^"]+">([^<]*)</div>#', $html, $event_start)) {
-            $event_start = preg_replace('#(Событие состоялось|Мероприятие состоялось)#i', '', $this->decode($event_start[1]));
+            $event_start = preg_replace('#(Событие состоялось|Мероприятие состоялось)#iu', '', $this->decode($event_start[1]));
             if (strpos($event_start, '&mdash;') !== false) {
                 $events = explode('&mdash;', $event_start);
                 $result['event_start'] = $this->date->parse(trim($events[0]))->toDateTimeString();
@@ -287,7 +287,7 @@ class VKService
             }
         }
 
-        if (preg_match('#<dt>Окончание:</dt><dd>([^>]*)</dd>#i', $html, $event_end)) {
+        if (preg_match('#<dt>Окончание:</dt><dd>([^>]*)</dd>#iu', $html, $event_end)) {
             $result['event_end'] = $this->date->parse($event_end[1])->toDateTimeString();
         }
 
@@ -364,9 +364,11 @@ class VKService
     private function parseContacts(string $html): array
     {
         preg_match_all('#fl_l thumb">\s+<a\s+href="([^"]+)"><img\s+class="cell_img"\s+src="([^"]+)"\s+alt="([^"]*)"#', $html, $images);
-        if (empty($images[1])) {
-            preg_match_all('#<a\s+href="([^"]+)"\s+class="line_cell\s+clear_fix">\s+<div class="fl_l\s+thumb">\s+<img\s+class="cell_img"\s+src="([^"]+)"\s+alt="([^"]+)"#', $html, $images);
-        }
+        preg_match_all('#<a\s+href="([^"]+)"\s+class="line_cell\s+clear_fix"[^>]+>\s+<div class="fl_l\s+thumb">\s+<img\s+class="cell_img"\s+src="([^"]+)"\s+alt="([^"]+)"#', $html, $images2);
+
+        $images[1] = array_merge($images[1], $images2[1]);
+        $images[2] = array_merge($images[2], $images2[2]);
+        $images[3] = array_merge($images[3], $images2[3]);
 
         $contacts = [];
 
@@ -391,7 +393,7 @@ class VKService
     {
         $lastPostAt = null;
 
-        if (!preg_match_all('#own[^"]*" data-post-id="-([^"]*)"#i', $html, $ids)) {
+        if (!preg_match_all('#data-post-id="-([^"]*)" onclick="wall\.postClick\(#i', $html, $ids)) {
             $ids = [1 => []];
         }
 
@@ -401,19 +403,19 @@ class VKService
             }
         }
 
-        if (!preg_match_all('#aria-label="(\d+) Нравится"><i class="i_like">#i', $html, $likes)) {
+        if (!preg_match_all('#aria-label="(\d+) Нравится"><i class="i_like">#iu', $html, $likes)) {
             if (!preg_match_all('#Likes\.showLikes\(this,\s+\'wall-(\d+_\d+)\',\s+{}\)"\s+data-count="(\d+)"#i', $html, $likes)) {
                 $likes = [1 => []];
             }
         }
 
-        if (!preg_match_all('#aria-label="(\d+) Поделиться"><i class="i_share">#i', $html, $shares)) {
+        if (!preg_match_all('#aria-label="(\d+) Поделиться"><i class="i_share">#iu', $html, $shares)) {
             if (!preg_match_all('#Likes.showShare\(this,\s+\'wall-(\d+_\d+)\'\);"\s+data-count="(\d+)"#i', $html, $shares)) {
                 $shares = [1 => []];
             }
         }
 
-        if (!preg_match_all('#no_views|aria-label="(\d+) (просмотр|просмотра|просмотров)*"><i class="i_views">#i', $html, $views)) {
+        if (!preg_match_all('#no_views|aria-label="(\d+) (просмотр|просмотра|просмотров)*"><i class="i_views">#iu', $html, $views)) {
             if (!preg_match_all('#Likes.updateViews\(\'wall-(\d+_\d+)\'\);">([^<]+)</div>#i', $html, $views)) {
                 $views = [1 => []];
             }
@@ -421,7 +423,7 @@ class VKService
 
         $posts = [];
 
-        if (!(sizeof($ids[1]) > 0)) {
+        if (count($ids[1]) === 0) {
             return [
                 'last_post_at' => null,
             ];
@@ -697,14 +699,14 @@ class VKService
      * @param \DOMElement $post
      * @return array|null
      */
-    private function getPostVideo(\DOMXPath &$xpath, \DOMElement &$post): ?array
+    private function getPostVideo(\DOMXPath $xpath, \DOMElement $post): ?array
     {
         $video = $xpath->query('.//div[contains(@class, "wall_text")]//div[contains(@class, "post_video_desc")]', $post)->item(0);
 
         if ($video) {
             $html = $video->ownerDocument->saveHTML($video);
 
-            if (preg_match('#return\s+showVideo\(\'-*(\d+)_(\d+)\'#i', $html, $video)) {
+            if (preg_match('#return\s+showVideo\((?:"|\'|&quot;)-*(\d+)_(\d+)(?:"|\'|&quot;)#i', $html, $video)) {
                 return [
                     'group_id' => $video[1],
                     'video_id' => $video[2],
@@ -720,7 +722,7 @@ class VKService
      * @param \DOMElement $post
      * @return bool
      */
-    private function isPostHasGif(\DOMXPath &$xpath, \DOMElement &$post): bool
+    private function isPostHasGif(\DOMXPath $xpath, \DOMElement $post): bool
     {
         return $xpath->query('.//div[@class="page_gif_play_icon"]', $post)->length > 0;
     }
@@ -730,7 +732,7 @@ class VKService
      * @param \DOMElement $post
      * @return array|null
      */
-    private function getSharedPost(\DOMXPath &$xpath, \DOMElement &$post): ?array
+    private function getSharedPost(\DOMXPath $xpath, \DOMElement $post): ?array
     {
         $link = $xpath->query('.//a[contains(@class, "copy_author")]', $post);
 
@@ -768,6 +770,6 @@ class VKService
 
     private function normalizeUrl(string $image): string
     {
-        return !preg_match('#^http#', $image) ? 'https://vk.com' . $image : $image;
+        return strpos($image, 'http') !== 0 ? 'https://vk.com' . $image : $image;
     }
 }

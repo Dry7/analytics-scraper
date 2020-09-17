@@ -70,15 +70,15 @@ class VKDate
                 return Carbon::now()->subHours(5)->second(0);
         }
 
-        if (preg_match('#\d (минут|минуты|минуту) назад#i', $date)) {
+        if (preg_match('#\d (минут|минуты|минуту) назад#iu', $date)) {
             return Carbon::now()->subMinutes((int)$date);
         }
 
-        if (preg_match('#\d (секунд|секунду|секунды) назад#i', $date)) {
+        if (preg_match('#\d (секунд|секунду|секунды) назад#iu', $date)) {
             return Carbon::now()->subSeconds((int)$date);
         }
 
-        if (preg_match('#\d год#i', $date)) {
+        if (preg_match('#\d год#iu', $date)) {
             return Carbon::createFromDate((int)$date, 1, 1)->setTime(0, 0, 0);
         }
 
@@ -117,20 +117,20 @@ class VKDate
             'дек' => 12,
         ];
 
-        $date = preg_replace('#сегодня в#i', Carbon::now()->format('d.m.Y'), $date);
-        $date = preg_replace('#вчера в#i', Carbon::now()->subDay()->format('d.m.Y'), $date);
-        $date = preg_replace('#Фераль#i', 'фев', $date);
+        $date = preg_replace('#сегодня в#iu', Carbon::now()->format('d.m.Y'), $date);
+        $date = preg_replace('#вчера в#iu', Carbon::now()->subDay()->format('d.m.Y'), $date);
+        $date = preg_replace('#Фераль#iu', 'фев', $date);
 
         $year = $this->getYear($date);
 
         foreach ($months as $val => $id) {
-            $date = preg_replace('# ' . $val . ' #i', '.' . $id . '.' . $year, $date);
+            $date = preg_replace('#(?: | )' . $val . '(?: | )#iu', '.' . $id . '.' . $year, $date);
         }
-        if (!preg_match('#\d{1,2}:\d{1,2}#i', $date)) {
+        if (!preg_match('#\d{1,2}:\d{1,2}#', $date)) {
             $date .= ' 00:00';
         }
 
-        $date = preg_replace('#в#', '', $date);
+        $date = preg_replace('#в#u', '', $date);
 
         return Carbon::createFromFormat('d.m.Y H:i', $date)->second(0);
     }
