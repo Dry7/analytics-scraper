@@ -6,7 +6,7 @@ class VKPost
 {
     public function exportHash(string $html): ?string
     {
-        if (preg_match('#\{preview:\s+\d+,\s+width:\s+%width%\},\s+\'([^\']+)\'\)",\s+data#i', $html, $hash)) {
+        if (preg_match('#\{preview:\s+\d+,\s+width:\s+%width%\},\s+\'([^\']+)\'\)\\\\",\s+data#i', $html, $hash)) {
             return $hash[1];
         }
 

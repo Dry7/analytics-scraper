@@ -17,10 +17,11 @@ class TestCommand extends Command
 
     public function handle(VKService $service, VKPostService $postService, ScraperService $scraperService)
     {
+        $hash = $postService->exportHash(272, 5519676);
+        dd($hash);
 //        echo $postService->exportHash(5277, 717319);
         Carbon::setTestNow('2016-01-01 00:00:00');
         $wall = $service->runWall(['source_id' => 337]);
-
         print_r($wall[1]);
 
 //        print_r($postService->comments(337, 358705));

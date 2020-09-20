@@ -4,8 +4,8 @@ services:
     image: qoomon/docker-host
     cap_add: [ 'NET_ADMIN', 'NET_RAW' ]
     restart: on-failure
-    environment:
-      - PORTS=0:1024,9000,9999,5672
+    #environment:
+    #  - PORTS=0:1024,9000,9999,5672
 
   php:
     build: ./docker/php
