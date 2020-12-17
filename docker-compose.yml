@@ -20,7 +20,7 @@ services:
 
   phpunit:
     build: ./docker/php
-    command: vendor/bin/phpunit
+    command: vendor/bin/phpunit -v
     volumes:
       - .:/var/www/analytics/scraper
     working_dir: /var/www/analytics/scraper

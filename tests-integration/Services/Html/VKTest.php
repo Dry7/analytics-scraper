@@ -515,7 +515,7 @@ class VKTest extends \TestCase
         $data = $this->service->runWall(['source_id' => $sourceId]);
 
         // assert
-        $this->assertEmpty($data);
+        self::assertEmpty($data);
     }
 
     public function oldWallDataProvider()
@@ -640,7 +640,7 @@ class VKTest extends \TestCase
         $this->assertNotEmpty($wall);
     }
 
-    public static function postGifDataProvider()
+    public static function postGifDataProvider(): array
     {
         return [
             [7606, '2017-01-01 00:00:00', 470000],
@@ -659,7 +659,7 @@ class VKTest extends \TestCase
      *
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function postGif(int $sourceId, string $date, int $expectedPostId)
+    public function postGif(int $sourceId, string $date, int $expectedPostId): void
     {
         Carbon::setTestNow($date);
 
@@ -703,12 +703,12 @@ class VKTest extends \TestCase
                 'world_swag',
                 [
                     [
-                        'avatar' => 'https://sun9-7.userapi.com/impg/Jz-Il0cXdbdL0Y84QYHhp5ea8EeA5hVoEVZxHA/Stz_VjLwV44.jpg?size=50x0&quality=88&crop=0,407,1727,1727&sign=771e84de6915c8f965451807e7036431&ava=1',
+                        'avatar' => 'https://sun9-7.userapi.com/impg/Jz-Il0cXdbdL0Y84QYHhp5ea8EeA5hVoEVZxHA/Stz_VjLwV44.jpg?size=50x0&quality=96&crop=0,407,1727,1727&sign=33fd9c04db10ef10a10a04e9e3a03bee&ava=1',
                         'name' => 'Віка Назімова',
                         'url' => 'https://vk.com/nazimova_v',
                     ],
                     [
-                        'avatar' => 'https://sun9-73.userapi.com/impf/c638726/v638726175/16ad7/Yq0EDEPz2x0.jpg?size=50x0&quality=88&crop=0,37,1037,1037&sign=09cd15f60551db3db080540f710fb1ca&ava=1',
+                        'avatar' => 'https://sun9-73.userapi.com/impf/c638726/v638726175/16ad7/Yq0EDEPz2x0.jpg?size=50x0&quality=96&crop=0,37,1037,1037&sign=6852b82028c2905389c4b6193fe1c331&ava=1',
                         'name' => 'Борис Ли',
                         'url' => 'https://vk.com/id196273175',
                     ],
@@ -727,12 +727,12 @@ class VKTest extends \TestCase
                         'url' => 'https://vk.com/id49186',
                     ],
                     [
-                        'avatar' => 'https://sun9-10.userapi.com/impf/obA54AdQE_HrYbKe2zhQyqKbnmkk7q-MsEvUfQ/_NdIPGF3RUQ.jpg?size=50x0&quality=88&crop=0,61,1536,1536&sign=5a06c043a582061be777331d14a28357&ava=1',
+                        'avatar' => 'https://sun9-10.userapi.com/impf/obA54AdQE_HrYbKe2zhQyqKbnmkk7q-MsEvUfQ/_NdIPGF3RUQ.jpg?size=50x0&quality=96&crop=0,61,1536,1536&sign=64fb2642c7ba2cddc2d707de0cd5a8b0&ava=1',
                         'name' => 'Ренат Садеков',
                         'url' => 'https://vk.com/rin4ik0',
                     ],
                     [
-                        'avatar' => 'https://sun9-43.userapi.com/impf/c301707/v301707365/49bf/Wz8ELixfKCw.jpg?size=50x0&quality=88&crop=0,111,768,768&sign=8a4550413c7b4eab728ec60015a99584&ava=1',
+                        'avatar' => 'https://sun9-43.userapi.com/impf/c301707/v301707365/49bf/Wz8ELixfKCw.jpg?size=50x0&quality=96&crop=0,111,768,768&sign=f968eb57570349ab786a16103a7f87ea&ava=1',
                         'name' => 'Станислав Вахитов',
                         'url' => 'https://vk.com/svahitov',
                     ],
@@ -752,7 +752,7 @@ class VKTest extends \TestCase
                         'url' => 'https://vk.com/smm_consulting',
                     ],
                     [
-                        'avatar' => 'https://sun9-72.userapi.com/impf/c630427/v630427305/2cb5d/t3-oXucxPI4.jpg?size=50x0&quality=88&crop=0,13,200,200&sign=ddff911d8db37d6da6322fc4d45afc4a&ava=1',
+                        'avatar' => 'https://sun9-72.userapi.com/impf/c630427/v630427305/2cb5d/t3-oXucxPI4.jpg?size=50x0&quality=96&crop=0,13,200,200&sign=49b7836a2a7202231b5e4f188132439f&ava=1',
                         'name' => 'Vladimir Belikov',
                         'url' => 'https://vk.com/id80725305',
                     ],

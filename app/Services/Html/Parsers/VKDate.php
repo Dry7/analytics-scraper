@@ -1,13 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: dry7
- * Date: 06.01.19
- * Time: 19:34
- */
+
+declare(strict_types=1);
 
 namespace App\Services\Html\Parsers;
-
 
 use Carbon\Carbon;
 

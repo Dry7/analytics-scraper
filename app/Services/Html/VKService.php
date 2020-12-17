@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services\Html;
 
+use App\Helpers\Decoder;
 use App\Helpers\Utils;
 use App\Services\CountryService;
 use App\Services\Html\Parsers\VKDate;
+use App\Services\Vkontakte\Parsers\VKWallParser;
 use App\Types\Type;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
@@ -14,6 +16,8 @@ use GuzzleHttp\Exception\RequestException;
 
 class VKService
 {
+    use Decoder;
+
     private const BASE_URL = 'https://vk.com/';
 
     private const INFO = [
@@ -187,7 +191,7 @@ class VKService
 
     private function isRateLimit(string $html)
     {
-        return preg_match('#Вы попытались загрузить более одной однотипной страницы в секунду.#i', $html);
+        return preg_match('#Вы попытались загрузить более одной однотипной страницы в секунду.#iu', $html);
     }
 
     /**
@@ -391,78 +395,12 @@ class VKService
      */
     private function loadWallFromGroup(string $html)
     {
-        $lastPostAt = null;
-
-        if (!preg_match_all('#data-post-id="-([^"]*)" onclick="wall\.postClick\(#i', $html, $ids)) {
-            $ids = [1 => []];
-        }
-
-        if (!preg_match_all('#<a class="wi_date"(?: [^>]*)>([^<]*)</a>#i', $html, $dates)) {
-            if (!preg_match_all('#showWiki\({w:\s*\'wall-(\d+_\d+)\'},\s*false,\s*event\);" ><span class="rel_date[^>]*>([^<]+)</span>#i', $html, $dates)) {
-                $dates = [1 => []];
-            }
-        }
-
-        if (!preg_match_all('#aria-label="(\d+) Нравится"><i class="i_like">#iu', $html, $likes)) {
-            if (!preg_match_all('#Likes\.showLikes\(this,\s+\'wall-(\d+_\d+)\',\s+{}\)"\s+data-count="(\d+)"#i', $html, $likes)) {
-                $likes = [1 => []];
-            }
-        }
-
-        if (!preg_match_all('#aria-label="(\d+) Поделиться"><i class="i_share">#iu', $html, $shares)) {
-            if (!preg_match_all('#Likes.showShare\(this,\s+\'wall-(\d+_\d+)\'\);"\s+data-count="(\d+)"#i', $html, $shares)) {
-                $shares = [1 => []];
-            }
-        }
-
-        if (!preg_match_all('#no_views|aria-label="(\d+) (просмотр|просмотра|просмотров)*"><i class="i_views">#iu', $html, $views)) {
-            if (!preg_match_all('#Likes.updateViews\(\'wall-(\d+_\d+)\'\);">([^<]+)</div>#i', $html, $views)) {
-                $views = [1 => []];
-            }
-        }
-
-        $posts = [];
-
-        if (count($ids[1]) === 0) {
-            return [
-                'last_post_at' => null,
-            ];
-        }
-
-        $dates  = $this->mergeCounts($dates[1], $dates[2]);
-        $likes  = $this->mergeCounts($likes[1], $likes[2]);
-        $shares = $this->mergeCounts($shares[1], $shares[2]);
-        $views  = $this->mergeCounts((array)@$views[1], (array)@$views[2]);
-
-        foreach ($ids[1] as $i => $id) {
-            $date = $this->date->parse($this->decode($dates[$id]));
-            if (is_null($lastPostAt) || $date > $lastPostAt) {
-                $lastPostAt = $date;
-            }
-            $posts[] = [
-                'id'     => array_last(explode('_', $id)),
-                'date'   => $date->toDateTimeString(),
-                'likes'  => $likes[$id] ?? null,
-                'shares' => $shares[$id] ?? null,
-                'views'  => $this->getNumber($views[1][$i] ?? '0'),
-            ];
-        }
+        $wall = (new VKWallParser($html))->parse();
 
         return [
-            'last_post_at' => $lastPostAt instanceof Carbon ? $lastPostAt->toDateTimeString() : null,
+            'last_post_at' => $wall->getLastPostAt(),
 //            'wall'         => $posts,
         ];
-    }
-
-    private function mergeCounts(array $keys, array $values): array
-    {
-        $array = [];
-
-        foreach ($keys as $i => $key) {
-            $array[$key] = $values[$i];
-        }
-
-        return $array;
     }
 
     /**
@@ -473,7 +411,7 @@ class VKService
      */
     private function loadWall(int $groupId, int $offset = 0): string
     {
-        $response = (string)$this->client->request('GET', self::BASE_URL . 'wall-' . $groupId,
+        $response = (string)$this->client->request('GET', self::BASE_URL . 'wall-' . $groupId . '?own=1',
             [
               'headers' => $this->clientOptions['headers'] +
                   [
@@ -757,15 +695,6 @@ class VKService
         parse_str(parse_url($url)['query'], $result);
 
         return $this->decode($result['to']);
-    }
-
-    /**
-     * @param string $text
-     * @return string
-     */
-    private function decode(string $text): string
-    {
-        return iconv('cp1251', 'utf-8', $text);
     }
 
     private function normalizeUrl(string $image): string

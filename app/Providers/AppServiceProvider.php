@@ -7,10 +7,12 @@ namespace App\Providers;
 use App\Services\CountryService;
 use App\Services\Html\Parsers\VKDate;
 use App\Services\Html\Parsers\VKPost;
+use App\Services\Html\Vkontakte\VKLeftAdsCrawler;
 use App\Services\LoggerService;
 use App\Services\ScraperService;
 use Illuminate\Support\ServiceProvider;
 use GuzzleHttp\Client;
+use Laravel\Lumen\Application;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,5 +36,8 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->singleton(VKPost::class);
         $this->app->singleton(VKDate::class);
+        $this->app->singleton(VKLeftAdsCrawler::class, static function (Application $app) {
+            return new VKLeftAdsCrawler($app[Client::class]);
+        });
     }
 }
